@@ -9,37 +9,42 @@
 
     <Button
         android:id="@+id/btn_add_parts"
-        android:layout_width="200dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@android:color/holo_green_dark"
+        android:background="@color/colorPrimaryDark"
         android:text="@string/place_btn"
         android:textSize="24sp"
+        android:padding="20dp"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/btn_invent"
-        android:layout_width="200dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toEndOf="@+id/btn_add_parts"
-        android:background="@android:color/holo_green_dark"
+        android:background="@color/colorPrimaryDark"
         android:text="@string/btn_invent"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:padding="20dp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/btn_add_parts" />
 
     <Button
         android:id="@+id/btn_add_place"
-        android:layout_width="200dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toStartOf="@+id/btn_add_parts"
-        android:background="@android:color/holo_green_dark"
+        android:background="@color/colorPrimaryDark"
         android:text="@string/btn_place"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:padding="20dp"
+        android:textStyle="bold"
+        android:layout_toLeftOf="@+id/btn_add_parts" />
 </RelativeLayout>

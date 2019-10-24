@@ -23,10 +23,13 @@ import static com.pavchishin.skladhelper.DBHelper.PART_QUANTITY_REAL;
 import static com.pavchishin.skladhelper.MainActivity.PARTS_FOLDER;
 import static com.pavchishin.skladhelper.MainActivity.TAG;
 
-public class CalculateTask extends AsyncTask<Void, String, Void> {
+public class CalculateTask extends AsyncTask<Void, Void, String[]> {
+
+    public static final String REDEX = "\\|";
+
     private String fileName;
     private DBHelper helper;
-    private  Context context;
+    private Context context;
 
     public CalculateTask(Context context, String fileName) {
         this.fileName = fileName;
@@ -34,33 +37,32 @@ public class CalculateTask extends AsyncTask<Void, String, Void> {
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(String[] str) {
+        super.onPostExecute(str);
+        Log.d(TAG, "Для номера документа и даты " + str[0] + " " + str[1]);
         Intent intent = new Intent(context, CalculateActivity.class);
+        intent.putExtra("NUMBER", str[0]);
+        intent.putExtra("DATA", str[1]);
         context.startActivity(intent);
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected String[] doInBackground(Void... voids) {
         helper = new DBHelper(context);
-        readFile(fileName);
-        return null;
+        String[] mass = readFile(fileName);
+        return mass;
     }
 
-    private void readFile(String fileName) {
+    private String[] readFile(String fileName) {
         File workDirPath = new File(Environment.getExternalStorageDirectory() + File.separator + PARTS_FOLDER);
         File file = new File(workDirPath, fileName);
         SQLiteDatabase database = helper.getWritableDatabase();
+        String[] numberDate = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Log.d(TAG, line);
-                String[] data = line.split("\\|");
+                String[] data = line.split(REDEX);
                 if (data.length > 3) {
                     ContentValues values = new ContentValues();
                     values.put(PART_BARCODE, data[0]);
@@ -70,10 +72,13 @@ public class CalculateTask extends AsyncTask<Void, String, Void> {
                     values.put(PART_QUANTITY_DOC, Integer.parseInt(data[4]));
                     values.put(PART_QUANTITY_REAL, 0);
                     database.insert(DBHelper.TABLE_PARTS, null, values);
+                } else {
+                    numberDate = new String[]{data[0], data[1]};
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return numberDate;
     }
 }

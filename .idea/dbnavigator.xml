@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DataExportManager">
@@ -25,13 +25,13 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="ebc99c67-81c3-4d5f-addf-5d7e584ed5ba">
-        <schema name="main" object-types="column, dataset trigger, view, constraint, table, index" />
+        <schema name="main" object-types="dataset trigger, column, view, index, table, constraint" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="ebc99c67-81c3-4d5f-addf-5d7e584ed5ba">
-      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts;]]></console>
+      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts where barcode = 1215710010;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">

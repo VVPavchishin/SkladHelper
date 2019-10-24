@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">SkladHelper</string>
-    <string name="place_btn">Пiдрахунок кiлькостi запчастин</string>
-    <string name="btn_place">Пiдрахунок кiлькостi мiсць</string>
-    <string name="btn_invent">Вибiрковий пiдрахунок</string>
+    <string name="place_btn">Пiдрахунок\nкiлькостi\nзапчастин</string>
+    <string name="btn_place">Пiдрахунок\nкiлькостi\nмiсць</string>
+    <string name="btn_invent">Вибiрковий\nпiдрахунок\nзапчастин</string>
+    <string name="plus_one">Плюс один</string>
+    <string name="set_location">Задати мiсце</string>
+    <string name="scan">Scan</string>
+    <string name="fact_quantity">К-ть фактично</string>
+    <string name="dock_quantity">К-ть по накладнiй</string>
+    <string name="razniza">Рiзниця</string>
 </resources>
