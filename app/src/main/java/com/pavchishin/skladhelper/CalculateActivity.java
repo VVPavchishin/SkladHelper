@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,9 +14,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class CalculateActivity extends AppCompatActivity {
 
     private static final String TAG = "--->>";
+    private static final String EMPTY = "";
 
     TextView txtNumber, txtDate, namePart,
             artikulPart, locationPart, quantityPart,
@@ -25,6 +29,8 @@ public class CalculateActivity extends AppCompatActivity {
     CheckBox plusOne, changeLocation;
 
     DBHelper helper;
+    SQLiteDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,49 +61,73 @@ public class CalculateActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String scanText = scanner.getText().toString();
                 if(checkDatabase(scanText)){
-                    scanner.setText("");
-                } else
+                    namePart.setTextColor(Color.WHITE);
+                    scanner.setText(EMPTY);
+                } else {
+                    namePart.setTextColor(Color.RED);
                     namePart.setText("Данна запчастина вiдсутня в списку.");
+                    scanner.setText(EMPTY);
+                    artikulPart.setText(EMPTY);
+                    locationPart.setText(EMPTY);
+                    quantityDoc.setText(EMPTY);
+                    quantityReal.setText(EMPTY);
+                    difference.setText(EMPTY);
+                }
             }
         });
 
         helper = new DBHelper(this);
+        db = helper.getWritableDatabase();
 
         Intent intent = getIntent();
         String numberDoc = intent.getStringExtra("NUMBER");
         String dateDoc = intent.getStringExtra("DATA");
-        txtNumber.setText(numberDoc.substring(5));
+        if (numberDoc != null) {
+            txtNumber.setText(numberDoc.substring(5));
+        }
         txtDate.setText(dateDoc);
     }
 
     private boolean checkDatabase(String scanText) {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        String query = "SELECT " + DBHelper.PART_BARCODE + " FROM " + DBHelper.TABLE_PARTS;
+        boolean flag = false;
+        String query = "SELECT " + DBHelper.PART_BARCODE + " FROM " + DBHelper.TABLE_PARTS + ";";
         Cursor cursor = db.rawQuery(query, null);
+        Log.d(TAG, "<--- " + scanText + " --->");
         while (cursor.moveToNext()) {
-            String name = cursor.getString(cursor
-                    .getColumnIndex(DBHelper.PART_BARCODE));
+            String name = cursor.getString(cursor.getColumnIndex(DBHelper.PART_BARCODE));
             if (scanText.contains(name)){
-                Cursor partCursor = db.rawQuery("SELECT * FROM " + DBHelper.TABLE_PARTS +
-                        " WHERE " + DBHelper.PART_BARCODE + " =?", new String[]{name});
-                while (partCursor.moveToNext()) {
-                    String artik = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_ARTIKUL));
-                    artikulPart.setText(artik);
-                    String nameP = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_NAME));
-                    namePart.setText(nameP);
-                    String place = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_PLACE));
-                    locationPart.setText(place);
-                    int quantDoc = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_DOC));
-                    quantityDoc.setText(String.valueOf(quantDoc));
-                    int quantReal = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL));
-                    quantityReal.setText(String.valueOf(quantReal));
-                    difference.setText(String.valueOf(quantDoc - quantReal));
-                }
+                flag = true;
+                Log.d(TAG, "<--- " + name + " --->");
+                fillDisplay(name);
                 break;
+            } else {
+                flag = false;
             }
         }
         cursor.close();
-        return true;
+        return flag;
+    }
+
+    private void fillDisplay(String name) {
+        String queryAll = "SELECT * FROM " + DBHelper.TABLE_PARTS +
+                " WHERE " + DBHelper.PART_BARCODE + " LIKE " + "'" + name + "%" + "'" + ";";
+        Cursor partCursor = db.rawQuery(queryAll, null);
+        while (partCursor.moveToNext()) {
+            String artikulValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_ARTIKUL));
+            artikulPart.setText(artikulValue);
+            String nameValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_NAME));
+            namePart.setText(nameValue);
+            String locationValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_PLACE));
+            locationPart.setText(locationValue);
+            int quantityDocValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_DOC));
+            quantityDoc.setText(String.valueOf(quantityDocValue));
+            int quantityRealValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL));
+            quantityReal.setText(String.valueOf(quantityRealValue));
+            difference.setText(String.valueOf(quantityDocValue - quantityRealValue));
+            Log.d(TAG, "Артикул " + artikulValue + " Имя " + nameValue + " Количество " + quantityDocValue);
+            break;
+        }
+        partCursor.close();
     }
 
     private void setNoActionBar() {

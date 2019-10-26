@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,10 +52,14 @@ public class CalculateTask extends AsyncTask<Void, Void, String[]> {
     @Override
     protected String[] doInBackground(Void... voids) {
         helper = new DBHelper(context);
-        String[] mass = readFile(fileName);
+        String[] mass = new String[0];
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            mass = readFile(fileName);
+        }
         return mass;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private String[] readFile(String fileName) {
         File workDirPath = new File(Environment.getExternalStorageDirectory() + File.separator + PARTS_FOLDER);
         File file = new File(workDirPath, fileName);
@@ -61,7 +68,6 @@ public class CalculateTask extends AsyncTask<Void, Void, String[]> {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Log.d(TAG, line);
                 String[] data = line.split(REDEX);
                 if (data.length > 3) {
                     ContentValues values = new ContentValues();
