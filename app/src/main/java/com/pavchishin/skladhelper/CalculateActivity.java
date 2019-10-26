@@ -51,7 +51,7 @@ public class CalculateActivity extends AppCompatActivity {
         difference = findViewById(R.id.txt_difference);
 
         plusOne = findViewById(R.id.box_plus_one);
-
+        plusOne.setChecked(true);
         changeLocation = findViewById(R.id.box_location);
 
 
@@ -72,6 +72,7 @@ public class CalculateActivity extends AppCompatActivity {
                     quantityDoc.setText(EMPTY);
                     quantityReal.setText(EMPTY);
                     difference.setText(EMPTY);
+                    quantityPart.setText(EMPTY);
                 }
             }
         });
@@ -95,7 +96,7 @@ public class CalculateActivity extends AppCompatActivity {
         Log.d(TAG, "<--- " + scanText + " --->");
         while (cursor.moveToNext()) {
             String name = cursor.getString(cursor.getColumnIndex(DBHelper.PART_BARCODE));
-            if (scanText.contains(name)){
+            if (equalsStrings(scanText, name)){
                 flag = true;
                 Log.d(TAG, "<--- " + name + " --->");
                 fillDisplay(name);
@@ -108,11 +109,30 @@ public class CalculateActivity extends AppCompatActivity {
         return flag;
     }
 
+    private boolean equalsStrings(String scanText, String name) {
+        String value;
+        int len = scanText.trim().length();
+        Log.d(TAG, "Length " + len);
+        if (len == 12){
+            value = scanText.trim();
+        } else if (len == 13) {
+            value = scanText.trim().substring(0, scanText.length() - 3);
+        } else {
+            value = scanText.trim().substring(0, scanText.length() - 1);
+        }
+       Log.d(TAG, "Val " + value + " Vallength " + value.length() + " Name " + name + " namelenth " + name.length());
+        if (value.equals(name))
+            return true;
+        else
+            return false;
+    }
+
     private void fillDisplay(String name) {
         String queryAll = "SELECT * FROM " + DBHelper.TABLE_PARTS +
                 " WHERE " + DBHelper.PART_BARCODE + " LIKE " + "'" + name + "%" + "'" + ";";
         Cursor partCursor = db.rawQuery(queryAll, null);
         while (partCursor.moveToNext()) {
+            int idValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_ID));
             String artikulValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_ARTIKUL));
             artikulPart.setText(artikulValue);
             String nameValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_NAME));
@@ -122,12 +142,31 @@ public class CalculateActivity extends AppCompatActivity {
             int quantityDocValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_DOC));
             quantityDoc.setText(String.valueOf(quantityDocValue));
             int quantityRealValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL));
-            quantityReal.setText(String.valueOf(quantityRealValue));
-            difference.setText(String.valueOf(quantityDocValue - quantityRealValue));
+            int qnt = checkAndSet(idValue, quantityRealValue);
+            quantityReal.setText(String.valueOf(qnt));
+            difference.setText(String.valueOf(quantityDocValue - qnt));
             Log.d(TAG, "Артикул " + artikulValue + " Имя " + nameValue + " Количество " + quantityDocValue);
             break;
         }
         partCursor.close();
+    }
+
+    private int checkAndSet(int idValue, int quantityRealValue) {
+        if (plusOne.isChecked()){
+            quantityRealValue++;
+            quantityPart.setText(String.valueOf(quantityRealValue));
+            updateQuantity(idValue);
+            return quantityRealValue;
+        } else {
+
+        }
+        return 0;
+    }
+
+    private void updateQuantity(int idValue) {
+        db.execSQL("UPDATE " + DBHelper.TABLE_PARTS + " SET " +
+                DBHelper.PART_QUANTITY_REAL + " = " + DBHelper.PART_QUANTITY_REAL
+                + " + 1" + " WHERE " + DBHelper.PART_ID + "=?", new Integer[]{idValue});
     }
 
     private void setNoActionBar() {
