@@ -78,7 +78,7 @@
         android:gravity="center"
         android:imeOptions="actionDone"
         android:importantForAutofill="no"
-        android:inputType="textNoSuggestions"
+        android:inputType="textPassword"
         android:textSize="12sp"
         android:hint="@string/scan"
         android:cursorVisible="false"/>

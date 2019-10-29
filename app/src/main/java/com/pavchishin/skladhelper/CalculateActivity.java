@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -90,65 +91,45 @@ public class CalculateActivity extends AppCompatActivity {
     }
 
     private boolean checkDatabase(String scanText) {
-        boolean flag = false;
-        String query = "SELECT " + DBHelper.PART_BARCODE + " FROM " + DBHelper.TABLE_PARTS + ";";
-        Cursor cursor = db.rawQuery(query, null);
-        Log.d(TAG, "<--- " + scanText + " --->");
-        while (cursor.moveToNext()) {
-            String name = cursor.getString(cursor.getColumnIndex(DBHelper.PART_BARCODE));
-            if (equalsStrings(scanText, name)){
-                flag = true;
-                Log.d(TAG, "<--- " + name + " --->");
-                fillDisplay(name);
-                break;
-            } else {
-                flag = false;
-            }
-        }
-        cursor.close();
-        return flag;
-    }
-
-    private boolean equalsStrings(String scanText, String name) {
-        String value;
-        int len = scanText.trim().length();
-        Log.d(TAG, "Length " + len);
-        if (len == 12){
-            value = scanText.trim();
-        } else if (len == 13) {
-            value = scanText.trim().substring(0, scanText.length() - 3);
+        boolean flag;
+        String subScan = scanText.replace(" ", "");
+        String scanValue;
+        int scanLength = subScan.length();
+        if (scanLength == 13){
+            scanValue = subScan.substring(0, 12);
+        } else if (scanLength == 11){
+            scanValue = subScan.substring(0, 10);
         } else {
-            value = scanText.trim().substring(0, scanText.length() - 1);
+            scanValue = subScan;
         }
-       Log.d(TAG, "Val " + value + " Vallength " + value.length() + " Name " + name + " namelenth " + name.length());
-        if (value.equals(name))
-            return true;
-        else
-            return false;
-    }
+        Log.d(TAG, "Scan length " + scanLength + " barcode " + scanValue );
 
-    private void fillDisplay(String name) {
-        String queryAll = "SELECT * FROM " + DBHelper.TABLE_PARTS +
-                " WHERE " + DBHelper.PART_BARCODE + " LIKE " + "'" + name + "%" + "'" + ";";
-        Cursor partCursor = db.rawQuery(queryAll, null);
-        while (partCursor.moveToNext()) {
-            int idValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_ID));
-            String artikulValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_ARTIKUL));
+
+        String query = "SELECT * FROM " + DBHelper.TABLE_PARTS
+                + " WHERE " + DBHelper.PART_BARCODE + " LIKE " + "'" + scanValue + "'" + ";";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()){
+            int idValue = cursor.getInt(cursor.getColumnIndex(DBHelper.PART_ID));
+            String artikulValue = cursor.getString(cursor.getColumnIndex(DBHelper.PART_ARTIKUL));
             artikulPart.setText(artikulValue);
-            String nameValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_NAME));
+            String nameValue = cursor.getString(cursor.getColumnIndex(DBHelper.PART_NAME));
             namePart.setText(nameValue);
-            String locationValue = partCursor.getString(partCursor.getColumnIndex(DBHelper.PART_PLACE));
+            String locationValue = cursor.getString(cursor.getColumnIndex(DBHelper.PART_PLACE));
             locationPart.setText(locationValue);
-            int quantityDocValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_DOC));
+            int quantityDocValue = cursor.getInt(cursor.getColumnIndex(DBHelper.PART_QUANTITY_DOC));
             quantityDoc.setText(String.valueOf(quantityDocValue));
-            int quantityRealValue = partCursor.getInt(partCursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL));
+            int quantityRealValue = cursor.getInt(cursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL));
             int qnt = checkAndSet(idValue, quantityRealValue);
             quantityReal.setText(String.valueOf(qnt));
             difference.setText(String.valueOf(quantityDocValue - qnt));
             Log.d(TAG, "Артикул " + artikulValue + " Имя " + nameValue + " Количество " + quantityDocValue);
-            break;
+            flag = true;
+        } else {
+            Log.d(TAG, "Barcode not found " + scanValue);
+            flag = false;
         }
-        partCursor.close();
+        cursor.close();
+        return flag;
     }
 
     private int checkAndSet(int idValue, int quantityRealValue) {
@@ -158,7 +139,13 @@ public class CalculateActivity extends AppCompatActivity {
             updateQuantity(idValue);
             return quantityRealValue;
         } else {
+            quantityPart.setBackgroundColor(Color.parseColor("#FFA69EA6"));
+            quantityPart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
+                }
+            });
         }
         return 0;
     }

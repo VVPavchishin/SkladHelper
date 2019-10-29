@@ -29,4 +29,9 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="NumberPickerText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>
