@@ -2,22 +2,26 @@ package com.pavchishin.skladhelper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class CalculateActivity extends AppCompatActivity {
+public class CalculateActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
 
     private static final String TAG = "--->>";
     private static final String EMPTY = "";
@@ -52,8 +56,10 @@ public class CalculateActivity extends AppCompatActivity {
         difference = findViewById(R.id.txt_difference);
 
         plusOne = findViewById(R.id.box_plus_one);
+        plusOne.setVisibility(View.INVISIBLE);
         plusOne.setChecked(true);
         changeLocation = findViewById(R.id.box_location);
+        changeLocation.setVisibility(View.INVISIBLE);
 
 
         scanner = findViewById(R.id.edt_barcode);
@@ -62,8 +68,11 @@ public class CalculateActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String scanText = scanner.getText().toString();
                 if(checkDatabase(scanText)){
+                    plusOne.setVisibility(View.VISIBLE);
+                    changeLocation.setVisibility(View.VISIBLE);
                     namePart.setTextColor(Color.WHITE);
                     scanner.setText(EMPTY);
+                    checkQuantity();
                 } else {
                     namePart.setTextColor(Color.RED);
                     namePart.setText("Данна запчастина вiдсутня в списку.");
@@ -74,6 +83,8 @@ public class CalculateActivity extends AppCompatActivity {
                     quantityReal.setText(EMPTY);
                     difference.setText(EMPTY);
                     quantityPart.setText(EMPTY);
+                    plusOne.setVisibility(View.INVISIBLE);
+                    changeLocation.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -88,6 +99,26 @@ public class CalculateActivity extends AppCompatActivity {
             txtNumber.setText(numberDoc.substring(5));
         }
         txtDate.setText(dateDoc);
+    }
+
+    private void checkQuantity() {
+        plusOne.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    quantityPart.setBackgroundColor(Color.GREEN);
+                    quantityPart.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showQuantityDialog();
+                        }
+                    });
+                } else {
+                    quantityPart.setBackgroundColor(Color.BLACK);
+                    quantityPart.setEnabled(false);
+                }
+            }
+        });
     }
 
     private boolean checkDatabase(String scanText) {
@@ -138,16 +169,42 @@ public class CalculateActivity extends AppCompatActivity {
             quantityPart.setText(String.valueOf(quantityRealValue));
             updateQuantity(idValue);
             return quantityRealValue;
-        } else {
-            quantityPart.setBackgroundColor(Color.parseColor("#FFA69EA6"));
-            quantityPart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
         }
         return 0;
+    }
+
+    private void showQuantityDialog() {
+        final Dialog dialog = new Dialog(CalculateActivity.this);
+        dialog.setTitle("Вкажiть кiлькiсть");
+        dialog.setContentView(R.layout.dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.GREEN));
+        Button add = dialog.findViewById(R.id.btn_add);
+        Button cancel = dialog.findViewById(R.id.btn_cancel);
+        final NumberPicker np = dialog.findViewById(R.id.numberPicker);
+        np.setMaxValue(100);
+        np.setMinValue(0);
+        np.setWrapSelectorWheel(false);
+        np.setOnValueChangedListener(this);
+        add.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                int oldValue = Integer.parseInt(String.valueOf(quantityPart.getText()));
+                int addQuantity = np.getValue();
+                quantityPart.setText(String.valueOf(oldValue + addQuantity));
+                quantityPart.setBackgroundColor(Color.parseColor("#161516"));
+                setNoActionBar();
+                dialog.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setNoActionBar();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     private void updateQuantity(int idValue) {
@@ -167,4 +224,7 @@ public class CalculateActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
+
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {}
 }

@@ -9,4 +9,6 @@
     <string name="fact_quantity">К-ть фактично</string>
     <string name="dock_quantity">К-ть по накладнiй</string>
     <string name="razniza">Рiзниця</string>
+    <string name="add_quantity">Добавити</string>
+    <string name="cancel">Вiдмiнити</string>
 </resources>

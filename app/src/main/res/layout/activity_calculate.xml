@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorDark"
     style="@style/AppTheme.NoActionBar"
+    tools:ignore="RtlSymmetry"
     tools:context=".CalculateActivity">
 
 

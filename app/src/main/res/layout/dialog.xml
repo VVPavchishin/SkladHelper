@@ -3,7 +3,7 @@
     android:layout_height="fill_parent" >
 
     <NumberPicker
-        android:id="@+id/numberPicker1"
+        android:id="@+id/numberPicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -12,21 +12,23 @@
         android:theme="@style/NumberPickerText"/>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btn_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/numberPicker1"
+        android:layout_below="@+id/numberPicker"
         android:layout_marginTop="10dp"
-        android:layout_toRightOf="@+id/numberPicker1"
-        android:text="Вiдмiнити" />
+        android:layout_toRightOf="@+id/numberPicker"
+        android:text="@string/cancel"
+        android:layout_toEndOf="@+id/numberPicker" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/btn_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button2"
-        android:layout_alignBottom="@+id/button2"
-        android:layout_toLeftOf="@+id/numberPicker1"
-        android:text="Добавити" />
+        android:layout_alignBaseline="@+id/btn_cancel"
+        android:layout_alignBottom="@+id/btn_cancel"
+        android:layout_toLeftOf="@+id/numberPicker"
+        android:text="@string/add_quantity"
+        android:layout_toStartOf="@+id/numberPicker" />
 
 </RelativeLayout>
