@@ -80,7 +80,7 @@
         android:imeOptions="actionDone"
         android:importantForAutofill="no"
         android:inputType="textPassword"
-        android:textSize="12sp"
+        android:textSize="20sp"
         android:hint="@string/scan"
         android:cursorVisible="false"/>
     <CheckBox

@@ -28,7 +28,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
 
     TextView txtNumber, txtDate, namePart,
             artikulPart, locationPart, quantityPart,
-            quantityDoc, quantityReal, difference;
+            quantityDoc, quantityReal, difference,
+            titleDoc, titleReal, titleDifference;
 
     EditText scanner;
     CheckBox plusOne, changeLocation;
@@ -51,9 +52,18 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         locationPart = findViewById(R.id.txt_location);
         quantityPart = findViewById(R.id.txt_quantity);
 
+        /* Количественные поля для ввода */
         quantityDoc = findViewById(R.id.txt_doc_quantity);
         quantityReal = findViewById(R.id.txt_real_quantity);
         difference = findViewById(R.id.txt_difference);
+
+        /* Количественные названия полей для ввода */
+        titleDoc = findViewById(R.id.doc_quantity);
+        titleDoc.setVisibility(View.INVISIBLE);
+        titleReal = findViewById(R.id.real_quantity);
+        titleReal.setVisibility(View.INVISIBLE);
+        titleDifference = findViewById(R.id.plus_mines);
+        titleDifference.setVisibility(View.INVISIBLE);
 
         plusOne = findViewById(R.id.box_plus_one);
         plusOne.setVisibility(View.INVISIBLE);
@@ -63,6 +73,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
 
 
         scanner = findViewById(R.id.edt_barcode);
+        scanner.setHintTextColor(Color.WHITE);
         scanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,13 +81,18 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                 if(checkDatabase(scanText)){
                     plusOne.setVisibility(View.VISIBLE);
                     changeLocation.setVisibility(View.VISIBLE);
+                    titleDoc.setVisibility(View.VISIBLE);
+                    titleReal.setVisibility(View.VISIBLE);
+                    titleDifference.setVisibility(View.VISIBLE);
                     namePart.setTextColor(Color.WHITE);
                     scanner.setText(EMPTY);
-                    checkQuantity();
+                    scanner.setHint(EMPTY);
+                    setQuantity();
                 } else {
                     namePart.setTextColor(Color.RED);
                     namePart.setText("Данна запчастина вiдсутня в списку.");
                     scanner.setText(EMPTY);
+                    scanner.setHint(EMPTY);
                     artikulPart.setText(EMPTY);
                     locationPart.setText(EMPTY);
                     quantityDoc.setText(EMPTY);
@@ -86,6 +102,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                     plusOne.setVisibility(View.INVISIBLE);
                     changeLocation.setVisibility(View.INVISIBLE);
                 }
+
             }
         });
 
@@ -101,12 +118,13 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         txtDate.setText(dateDoc);
     }
 
-    private void checkQuantity() {
+    private void setQuantity() {
         plusOne.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
-                    quantityPart.setBackgroundColor(Color.GREEN);
+                    quantityPart.setBackgroundColor(Color.CYAN);
+                    quantityPart.setEnabled(true);
                     quantityPart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -119,6 +137,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                 }
             }
         });
+
     }
 
     private boolean checkDatabase(String scanText) {
@@ -193,6 +212,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                 int addQuantity = np.getValue();
                 quantityPart.setText(String.valueOf(oldValue + addQuantity));
                 quantityPart.setBackgroundColor(Color.parseColor("#161516"));
+                plusOne.setChecked(true);
                 setNoActionBar();
                 dialog.dismiss();
             }
