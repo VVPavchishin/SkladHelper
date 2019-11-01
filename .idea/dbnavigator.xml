@@ -23,18 +23,23 @@
     <autoscroll-to-editor value="true" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="7f447220-23c5-4312-928a-6d471492ee11">
+        <schema name="main" object-types="index, constraint, table, view, dataset trigger, column" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="ebc99c67-81c3-4d5f-addf-5d7e584ed5ba">
-      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts;]]></console>
+      <console name="Connection" type="STANDARD" schema="main" session="Main">select * from parts;</console>
     </connection>
     <connection id="94682639-aca2-4a0e-93be-b7e5cf3ca351">
-      <console name="DBconnect" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts;]]></console>
+      <console name="DBconnect" type="STANDARD" schema="main" session="Main">select * from parts;</console>
     </connection>
     <connection id="7f447220-23c5-4312-928a-6d471492ee11">
       <console name="NConnect" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts where barcode like '1780131131%'
-select * from parts]]></console>
+select * from parts
+update parts set quantity_real = 50 where artikul ;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">

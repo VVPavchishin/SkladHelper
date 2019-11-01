@@ -3,6 +3,7 @@ package com.pavchishin.skladhelper;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,6 +21,7 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class CalculateActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
 
@@ -87,7 +89,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                     namePart.setTextColor(Color.WHITE);
                     scanner.setText(EMPTY);
                     scanner.setHint(EMPTY);
-                    setQuantity();
+                    String pName = artikulPart.getText().toString();
+                    setQuantity(pName);
                 } else {
                     namePart.setTextColor(Color.RED);
                     namePart.setText("Данна запчастина вiдсутня в списку.");
@@ -118,7 +121,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         txtDate.setText(dateDoc);
     }
 
-    private void setQuantity() {
+    private void setQuantity(final String pName) {
         plusOne.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -128,7 +131,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                     quantityPart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            showQuantityDialog();
+                            showQuantityDialog(pName);
                         }
                     });
                 } else {
@@ -159,7 +162,6 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                 + " WHERE " + DBHelper.PART_BARCODE + " LIKE " + "'" + scanValue + "'" + ";";
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()){
-            int idValue = cursor.getInt(cursor.getColumnIndex(DBHelper.PART_ID));
             String artikulValue = cursor.getString(cursor.getColumnIndex(DBHelper.PART_ARTIKUL));
             artikulPart.setText(artikulValue);
             String nameValue = cursor.getString(cursor.getColumnIndex(DBHelper.PART_NAME));
@@ -169,7 +171,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             int quantityDocValue = cursor.getInt(cursor.getColumnIndex(DBHelper.PART_QUANTITY_DOC));
             quantityDoc.setText(String.valueOf(quantityDocValue));
             int quantityRealValue = cursor.getInt(cursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL));
-            int qnt = checkAndSet(idValue, quantityRealValue);
+            int qnt = checkAndSet(artikulValue, quantityRealValue);
+            Log.d(TAG, qnt + "");
             quantityReal.setText(String.valueOf(qnt));
             difference.setText(String.valueOf(quantityDocValue - qnt));
             Log.d(TAG, "Артикул " + artikulValue + " Имя " + nameValue + " Количество " + quantityDocValue);
@@ -182,21 +185,20 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         return flag;
     }
 
-    private int checkAndSet(int idValue, int quantityRealValue) {
-        if (plusOne.isChecked()){
-            quantityRealValue++;
+    private int checkAndSet(String artikul, int quantityRealValue) {
+        int addOne = 1;
             quantityPart.setText(String.valueOf(quantityRealValue));
-            updateQuantity(idValue);
+            updateQuantity(artikul, addOne);
             return quantityRealValue;
-        }
-        return 0;
     }
 
-    private void showQuantityDialog() {
+    private void showQuantityDialog(final String pName) {
         final Dialog dialog = new Dialog(CalculateActivity.this);
         dialog.setTitle("Вкажiть кiлькiсть");
         dialog.setContentView(R.layout.dialog);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.GREEN));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.GREEN));
+        }
         Button add = dialog.findViewById(R.id.btn_add);
         Button cancel = dialog.findViewById(R.id.btn_cancel);
         final NumberPicker np = dialog.findViewById(R.id.numberPicker);
@@ -208,10 +210,14 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         {
             @Override
             public void onClick(View v) {
+                int docVal = Integer.parseInt(String.valueOf(quantityDoc.getText()));
                 int oldValue = Integer.parseInt(String.valueOf(quantityPart.getText()));
                 int addQuantity = np.getValue();
                 quantityPart.setText(String.valueOf(oldValue + addQuantity));
+                updateQuantity(pName, addQuantity);
                 quantityPart.setBackgroundColor(Color.parseColor("#161516"));
+                quantityReal.setText(String.valueOf(oldValue + addQuantity));
+                difference.setText(String.valueOf(docVal - (oldValue + addQuantity)));
                 plusOne.setChecked(true);
                 setNoActionBar();
                 dialog.dismiss();
@@ -227,10 +233,11 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         dialog.show();
     }
 
-    private void updateQuantity(int idValue) {
+    private void updateQuantity(String artikul , int newValue) {
+
         db.execSQL("UPDATE " + DBHelper.TABLE_PARTS + " SET " +
-                DBHelper.PART_QUANTITY_REAL + " = " + DBHelper.PART_QUANTITY_REAL
-                + " + 1" + " WHERE " + DBHelper.PART_ID + "=?", new Integer[]{idValue});
+                DBHelper.PART_QUANTITY_REAL + " = " + DBHelper.PART_QUANTITY_REAL + "+" + newValue + " WHERE "
+                + DBHelper.PART_ARTIKUL + "=?", new String[]{artikul});
     }
 
     private void setNoActionBar() {
