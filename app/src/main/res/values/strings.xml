@@ -5,10 +5,14 @@
     <string name="btn_invent">Вибiрковий\nпiдрахунок\nзапчастин</string>
     <string name="plus_one">Плюс один</string>
     <string name="set_location">Задати мiсце</string>
-    <string name="scan">Scan</string>
+    <string name="scan"> S C A N </string>
     <string name="fact_quantity">К-ть фактично</string>
     <string name="dock_quantity">К-ть по накладнiй</string>
     <string name="razniza">Рiзниця</string>
     <string name="add_quantity">Добавити</string>
     <string name="cancel">Вiдмiнити</string>
+    <string name="dial_title">Вкажiть нову локацiю</string>
+    <string name="dial_save">Зберегти</string>
+    <string name="dial_cancel">Вiдмiнити</string>
+    <string name="dial_format">1AA-00-00</string>
 </resources>

@@ -1,15 +1,32 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
-    android:layout_height="fill_parent" >
+    android:layout_width="350dp"
+    android:layout_height="250dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/title_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Вкажiть кiлькiсть"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"/>
 
     <NumberPicker
         android:id="@+id/numberPicker"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_height="100dp"
+        android:solidColor="@color/colorWhite"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:theme="@style/NumberPickerText"/>
+        android:layout_below="@+id/title_quantity"
+        android:theme="@style/NumberPickerText" />
 
     <Button
         android:id="@+id/btn_cancel"
@@ -19,7 +36,11 @@
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/numberPicker"
         android:text="@string/cancel"
-        android:layout_toEndOf="@+id/numberPicker" />
+        android:layout_toEndOf="@+id/numberPicker"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorPrimary"
+        android:layout_marginBottom="15dp"
+        android:padding="15dp"/>
 
     <Button
         android:id="@+id/btn_add"
@@ -29,6 +50,11 @@
         android:layout_alignBottom="@+id/btn_cancel"
         android:layout_toLeftOf="@+id/numberPicker"
         android:text="@string/add_quantity"
-        android:layout_toStartOf="@+id/numberPicker" />
+        android:padding="15dp"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorPrimary"
+        android:layout_toStartOf="@+id/numberPicker"
+        android:layout_marginBottom="15dp"/>
+
 
 </RelativeLayout>

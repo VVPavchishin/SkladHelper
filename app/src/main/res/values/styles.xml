@@ -32,6 +32,7 @@
     <style name="NumberPickerText">
         <item name="android:textSize">22sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorWhite</item>
     </style>
 
 </resources>

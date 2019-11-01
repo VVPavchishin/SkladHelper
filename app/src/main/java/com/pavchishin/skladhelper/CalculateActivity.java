@@ -11,8 +11,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -20,6 +24,7 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -91,6 +96,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                     scanner.setHint(EMPTY);
                     String pName = artikulPart.getText().toString();
                     setQuantity(pName);
+                    setLocation(pName);
                 } else {
                     namePart.setTextColor(Color.RED);
                     namePart.setText("Данна запчастина вiдсутня в списку.");
@@ -121,12 +127,101 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         txtDate.setText(dateDoc);
     }
 
+    private void setLocation(final String pName) {
+        changeLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    locationPart.setBackgroundColor(Color.DKGRAY);
+                    locationPart.setEnabled(true);
+                    locationPart.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showLocationDialog(pName);
+                        }
+                    });
+                } else {
+                    locationPart.setBackgroundColor(Color.BLACK);
+                    locationPart.setEnabled(false);
+                }
+            }
+        });
+    }
+
+    private void showLocationDialog(final String pName) {
+        final Dialog locationDialog = new Dialog(CalculateActivity.this);
+        locationDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        locationDialog.setContentView(R.layout.dialog_location);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(locationDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.DKGRAY));
+        }
+
+        final EditText locationName = locationDialog.findViewById(R.id.edt_location);
+        locationName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //Log.d(TAG, s + " " + start + " " + before + " " + count);
+               String location = "";
+               location = location + s;
+               if (location.length() == 3) {
+                   location = location + "-";
+                   locationName.setText(location);
+                   locationName.setSelection(4);
+               }
+                if (location.length() == 6) {
+                    location = location + "-";
+                    locationName.setText(location);
+                    locationName.setSelection(7);
+                }
+
+
+                Log.d(TAG, location);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Log.d(TAG, String.valueOf(s));
+                locationPart.setText(String.valueOf(s));
+            }
+        });
+
+        Button cancel = locationDialog.findViewById(R.id.btn_cancel_loc);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setNoActionBar();
+                changeLocation.setChecked(false);
+                locationDialog.dismiss();
+            }
+        });
+        Button save = locationDialog.findViewById(R.id.btn_set_location);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateLocationDb(pName);
+                setNoActionBar();
+                changeLocation.setChecked(false);
+                locationDialog.dismiss();
+            }
+        });
+
+
+        locationDialog.show();
+    }
+
+    private void updateLocationDb(String pName) {
+
+    }
+
     private void setQuantity(final String pName) {
         plusOne.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
-                    quantityPart.setBackgroundColor(Color.CYAN);
+                    quantityPart.setBackgroundColor(Color.DKGRAY);
                     quantityPart.setEnabled(true);
                     quantityPart.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -140,9 +235,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                 }
             }
         });
-
     }
-
     private boolean checkDatabase(String scanText) {
         boolean flag;
         String subScan = scanText.replace(" ", "");
@@ -156,7 +249,6 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             scanValue = subScan;
         }
         Log.d(TAG, "Scan length " + scanLength + " barcode " + scanValue );
-
 
         String query = "SELECT * FROM " + DBHelper.TABLE_PARTS
                 + " WHERE " + DBHelper.PART_BARCODE + " LIKE " + "'" + scanValue + "'" + ";";
@@ -186,7 +278,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
     }
 
     private int checkAndSet(String artikul, int quantityRealValue) {
-        int addOne = 1;
+            int addOne = 1;
             quantityPart.setText(String.valueOf(quantityRealValue));
             updateQuantity(artikul, addOne);
             return quantityRealValue;
@@ -194,10 +286,10 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
 
     private void showQuantityDialog(final String pName) {
         final Dialog dialog = new Dialog(CalculateActivity.this);
-        dialog.setTitle("Вкажiть кiлькiсть");
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.GREEN));
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.DKGRAY));
         }
         Button add = dialog.findViewById(R.id.btn_add);
         Button cancel = dialog.findViewById(R.id.btn_cancel);
@@ -226,6 +318,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                plusOne.setChecked(true);
                 setNoActionBar();
                 dialog.dismiss();
             }
