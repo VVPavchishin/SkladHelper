@@ -34,7 +34,8 @@
         android:lines="1"
         android:maxLength="9"
         android:textColorHint="@color/colorWhite"
-        android:textColor="@color/colorWhite"/>
+        android:textColor="@color/colorWhite"
+        android:cursorVisible="false"/>
 
     <Button
         android:id="@+id/btn_set_location"

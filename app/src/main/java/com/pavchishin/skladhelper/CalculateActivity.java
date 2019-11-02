@@ -84,6 +84,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         scanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setNoActionBar();
                 String scanText = scanner.getText().toString();
                 if(checkDatabase(scanText)){
                     plusOne.setVisibility(View.VISIBLE);
@@ -110,6 +111,9 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                     quantityPart.setText(EMPTY);
                     plusOne.setVisibility(View.INVISIBLE);
                     changeLocation.setVisibility(View.INVISIBLE);
+                    titleDoc.setVisibility(View.INVISIBLE);
+                    titleReal.setVisibility(View.INVISIBLE);
+                    titleDifference.setVisibility(View.INVISIBLE);
                 }
 
             }
@@ -160,10 +164,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         locationName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //Log.d(TAG, s + " " + start + " " + before + " " + count);
                String location = "";
                location = location + s;
                if (location.length() == 3) {
@@ -176,16 +178,9 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                     locationName.setText(location);
                     locationName.setSelection(7);
                 }
-
-
-                Log.d(TAG, location);
             }
-
             @Override
-            public void afterTextChanged(Editable s) {
-                //Log.d(TAG, String.valueOf(s));
-                locationPart.setText(String.valueOf(s));
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         Button cancel = locationDialog.findViewById(R.id.btn_cancel_loc);
@@ -201,7 +196,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateLocationDb(pName);
+                locationPart.setText(locationName.getText().toString());
+                updateLocationDb(pName, locationName.getText().toString());
                 setNoActionBar();
                 changeLocation.setChecked(false);
                 locationDialog.dismiss();
@@ -212,8 +208,11 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         locationDialog.show();
     }
 
-    private void updateLocationDb(String pName) {
-
+    private void updateLocationDb(String artikul, String location) {
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.PART_PLACE, location);
+        db.update(DBHelper.TABLE_PARTS, cv, DBHelper.PART_ARTIKUL + " = ?",
+                new String[] { artikul });
     }
 
     private void setQuantity(final String pName) {
@@ -279,9 +278,9 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
 
     private int checkAndSet(String artikul, int quantityRealValue) {
             int addOne = 1;
-            quantityPart.setText(String.valueOf(quantityRealValue));
+            quantityPart.setText(String.valueOf(quantityRealValue + 1));
             updateQuantity(artikul, addOne);
-            return quantityRealValue;
+            return quantityRealValue + 1;
     }
 
     private void showQuantityDialog(final String pName) {
