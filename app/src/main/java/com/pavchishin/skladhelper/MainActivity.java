@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean checkFile(String folderName){
+
         File folder = new File(Environment.getExternalStorageDirectory() +
                 File.separator + folderName);
         if (!folder.exists()) {

@@ -1,7 +1,5 @@
 package com.pavchishin.skladhelper;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -11,8 +9,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -24,14 +22,21 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Objects;
+
+import static com.pavchishin.skladhelper.MainActivity.PARTS_FOLDER;
 
 public class CalculateActivity extends AppCompatActivity implements NumberPicker.OnValueChangeListener {
 
-    private static final String TAG = "--->>";
+    private static final String TAG = ">>";
     private static final String EMPTY = "";
+    private static final String FILE_INPUT = "INPUT.txt";
 
     TextView txtNumber, txtDate, namePart,
             artikulPart, locationPart, quantityPart,
@@ -40,6 +45,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
 
     EditText scanner;
     CheckBox plusOne, changeLocation;
+
+    Button saveFile;
 
     DBHelper helper;
     SQLiteDatabase db;
@@ -78,6 +85,14 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         changeLocation = findViewById(R.id.box_location);
         changeLocation.setVisibility(View.INVISIBLE);
 
+        /* Выгрузка в файл */
+        saveFile = findViewById(R.id.btn_upload);
+        saveFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDataFromDB();
+            }
+        });
 
         scanner = findViewById(R.id.edt_barcode);
         scanner.setHintTextColor(Color.WHITE);
@@ -129,6 +144,53 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             txtNumber.setText(numberDoc.substring(5));
         }
         txtDate.setText(dateDoc);
+    }
+
+    private void getDataFromDB() {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Log.d(TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
+            return;
+        }
+        File folder = new File(Environment.getExternalStorageDirectory() +
+                File.separator + PARTS_FOLDER);
+        File sdFile = new File(folder, FILE_INPUT);
+        if (sdFile.exists()){
+            sdFile.delete();
+            Log.d(TAG, sdFile.getName() + " удален!");
+        }
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DBHelper.TABLE_PARTS, null);
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
+            bw.write(txtNumber.getText().toString() + "|" + txtDate.getText().toString() + "|" + 1 +"|" + 1 + "|" + "\n");
+
+            while (cursor.moveToNext()) {
+                int barcodeIndex = cursor.getColumnIndex(DBHelper.PART_BARCODE);
+                int artikulIndex = cursor.getColumnIndex(DBHelper.PART_ARTIKUL);
+                int nameIndex = cursor.getColumnIndex(DBHelper.PART_NAME);
+                int placeIndex = cursor.getColumnIndex(DBHelper.PART_PLACE);
+                int docIndex = cursor.getColumnIndex(DBHelper.PART_QUANTITY_DOC);
+                int realIndex = cursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL);
+
+                    bw.write(cursor.getString(barcodeIndex) + "|"
+                            + cursor.getString(artikulIndex) + "|"
+                            + cursor.getString(nameIndex) + "|"
+                            + cursor.getString(placeIndex) + "|"
+                            + cursor.getInt(docIndex) + "|"
+                            + cursor.getInt(realIndex) + "|" + "\n");
+                    Log.d(TAG, cursor.getString(barcodeIndex) + "|"
+                            + cursor.getString(artikulIndex) + "|"
+                            + cursor.getString(nameIndex) + "|"
+                            + cursor.getString(placeIndex) + "|"
+                            + cursor.getInt(docIndex) + "|"
+                            + cursor.getInt(realIndex) + "|");
+            }
+
+            bw.close();
+            Log.d(TAG, "Файл записан на SD: " + sdFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        cursor.close();
     }
 
     private void setLocation(final String pName) {

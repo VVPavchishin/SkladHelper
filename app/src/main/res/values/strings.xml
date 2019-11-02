@@ -15,4 +15,5 @@
     <string name="dial_save">Зберегти</string>
     <string name="dial_cancel">Вiдмiнити</string>
     <string name="dial_format">1AA-00-00</string>
+    <string name="load_to_file">Вигрузити в файл</string>
 </resources>
