@@ -79,34 +79,37 @@
         android:gravity="center"
         android:imeOptions="actionDone"
         android:importantForAutofill="no"
-        android:inputType="textPassword"
+        android:inputType="textVisiblePassword"
         android:textSize="20sp"
         android:hint="@string/scan"
+        android:windowSoftInputMode="stateHidden|adjustResize"
         android:cursorVisible="false"/>
+
     <CheckBox
         android:id="@+id/box_plus_one"
-        android:layout_width="wrap_content"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/edt_barcode"
-        android:layout_marginTop="20dp"
         android:layout_marginStart="50dp"
-        android:text="@string/plus_one"
-        android:padding="10dp"
         android:layout_marginLeft="50dp"
-        android:theme="@style/MyCheckBox"
-        android:textColor="@color/colorWhite"/>
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:text="@string/plus_one"
+        android:textColor="@color/colorWhite"
+        android:theme="@style/MyCheckBox" />
+
     <CheckBox
         android:id="@+id/box_location"
-        android:layout_width="wrap_content"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/box_plus_one"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="52dp"
-        android:text="@string/set_location"
-        android:padding="10dp"
-        android:textColor="@color/colorWhite"
+        android:layout_marginStart="50dp"
         android:layout_marginLeft="52dp"
-        android:theme="@style/MyCheckBox"/>
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:text="@string/set_location"
+        android:textColor="@color/colorWhite"
+        android:theme="@style/MyCheckBox" />
     <TextView
         android:id="@+id/doc_quantity"
         android:layout_width="150dp"
@@ -188,14 +191,27 @@
         android:id="@+id/btn_upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/box_location"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/txt_difference"
+        android:layout_toLeftOf="@id/btn_exit"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/colorDark"
+        android:textColor="@color/colorWhite"
+        android:text="@string/load_to_file"/>
+
+    <Button
+        android:id="@+id/btn_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/txt_difference"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="50dp"
         android:layout_marginEnd="50dp"
         android:background="@color/colorDark"
         android:textColor="@color/colorWhite"
-        android:text="@string/load_to_file"/>
+        android:text="Вихід" />
 
 </RelativeLayout>

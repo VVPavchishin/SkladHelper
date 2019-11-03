@@ -11,10 +11,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -46,7 +49,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
     EditText scanner;
     CheckBox plusOne, changeLocation;
 
-    Button saveFile;
+    Button saveFile, exit;
 
     DBHelper helper;
     SQLiteDatabase db;
@@ -55,8 +58,10 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setNoActionBar();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setContentView(R.layout.activity_calculate);
+        setNoActionBar();
+
 
         txtNumber = findViewById(R.id.txt_number_doc);
         txtDate = findViewById(R.id.txt_date_doc);
@@ -94,6 +99,10 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             }
         });
 
+        /* Выход */
+        exit = findViewById(R.id.btn_exit);
+        exit.setVisibility(View.INVISIBLE);
+
         scanner = findViewById(R.id.edt_barcode);
         scanner.setHintTextColor(Color.WHITE);
         scanner.setOnClickListener(new View.OnClickListener() {
@@ -116,19 +125,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
                 } else {
                     namePart.setTextColor(Color.RED);
                     namePart.setText("Данна запчастина вiдсутня в списку.");
-                    scanner.setText(EMPTY);
-                    scanner.setHint(EMPTY);
-                    artikulPart.setText(EMPTY);
-                    locationPart.setText(EMPTY);
-                    quantityDoc.setText(EMPTY);
-                    quantityReal.setText(EMPTY);
-                    difference.setText(EMPTY);
-                    quantityPart.setText(EMPTY);
-                    plusOne.setVisibility(View.INVISIBLE);
-                    changeLocation.setVisibility(View.INVISIBLE);
-                    titleDoc.setVisibility(View.INVISIBLE);
-                    titleReal.setVisibility(View.INVISIBLE);
-                    titleDifference.setVisibility(View.INVISIBLE);
+                    setEmptyFields();
                 }
 
             }
@@ -144,6 +141,22 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             txtNumber.setText(numberDoc.substring(5));
         }
         txtDate.setText(dateDoc);
+    }
+
+    private void setEmptyFields() {
+        scanner.setText(EMPTY);
+        scanner.setHint(EMPTY);
+        artikulPart.setText(EMPTY);
+        locationPart.setText(EMPTY);
+        quantityDoc.setText(EMPTY);
+        quantityReal.setText(EMPTY);
+        difference.setText(EMPTY);
+        quantityPart.setText(EMPTY);
+        plusOne.setVisibility(View.INVISIBLE);
+        changeLocation.setVisibility(View.INVISIBLE);
+        titleDoc.setVisibility(View.INVISIBLE);
+        titleReal.setVisibility(View.INVISIBLE);
+        titleDifference.setVisibility(View.INVISIBLE);
     }
 
     private void getDataFromDB() {
@@ -187,6 +200,25 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
 
             bw.close();
             Log.d(TAG, "Файл записан на SD: " + sdFile.getAbsolutePath());
+            saveFile.setTextColor(Color.GREEN);
+            saveFile.setText("Данні вигружено в файл");
+            saveFile.setEnabled(false);
+            setEmptyFields();
+            namePart.setText(EMPTY);
+            scanner.setInputType(InputType.TYPE_CLASS_TEXT);
+            scanner.setTextSize(18);
+            scanner.setText("Сканування завершено!");
+            exit.setVisibility(View.VISIBLE);
+            new DBHelper(this).onDelete(db);
+            exit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setNoActionBar();
+                    Intent intent = new Intent(CalculateActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -197,12 +229,14 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         changeLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setNoActionBar();
                 if (isChecked){
                     locationPart.setBackgroundColor(Color.DKGRAY);
                     locationPart.setEnabled(true);
                     locationPart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            setNoActionBar();
                             showLocationDialog(pName);
                         }
                     });
@@ -258,6 +292,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setNoActionBar();
                 locationPart.setText(locationName.getText().toString());
                 updateLocationDb(pName, locationName.getText().toString());
                 setNoActionBar();
@@ -281,6 +316,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         plusOne.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setNoActionBar();
                 if (!isChecked) {
                     quantityPart.setBackgroundColor(Color.DKGRAY);
                     quantityPart.setEnabled(true);
@@ -309,7 +345,6 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         } else {
             scanValue = subScan;
         }
-        Log.d(TAG, "Scan length " + scanLength + " barcode " + scanValue );
 
         String query = "SELECT * FROM " + DBHelper.TABLE_PARTS
                 + " WHERE " + DBHelper.PART_BARCODE + " LIKE " + "'" + scanValue + "'" + ";";
@@ -325,7 +360,6 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             quantityDoc.setText(String.valueOf(quantityDocValue));
             int quantityRealValue = cursor.getInt(cursor.getColumnIndex(DBHelper.PART_QUANTITY_REAL));
             int qnt = checkAndSet(artikulValue, quantityRealValue);
-            Log.d(TAG, qnt + "");
             quantityReal.setText(String.valueOf(qnt));
             difference.setText(String.valueOf(quantityDocValue - qnt));
             Log.d(TAG, "Артикул " + artikulValue + " Имя " + nameValue + " Количество " + quantityDocValue);

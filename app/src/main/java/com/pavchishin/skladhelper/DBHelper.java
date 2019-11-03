@@ -33,6 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "<--- onCreate database --->");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARTS);
         db.execSQL("create table " + TABLE_PARTS + " ("
                 + PART_ID + " integer primary key,"
                 + PART_BARCODE + " text,"
@@ -45,4 +46,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+
+    public void onDelete(SQLiteDatabase db){
+        Log.d(TAG, "<--- onDelete database --->");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARTS);
+    }
 }

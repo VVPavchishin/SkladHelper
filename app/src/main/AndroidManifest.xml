@@ -16,6 +16,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape"/>
         <activity android:name=".CalculateActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape"/>
         <activity android:name=".PlaceActivity"

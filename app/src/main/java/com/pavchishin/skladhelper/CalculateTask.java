@@ -64,6 +64,7 @@ public class CalculateTask extends AsyncTask<Void, Void, String[]> {
         File workDirPath = new File(Environment.getExternalStorageDirectory() + File.separator + PARTS_FOLDER);
         File file = new File(workDirPath, fileName);
         SQLiteDatabase database = helper.getWritableDatabase();
+        helper.onCreate(database);
         String[] numberDate = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String line;
