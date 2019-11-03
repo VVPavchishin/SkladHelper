@@ -22,9 +22,14 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String PART_QUANTITY_DOC = "quantity_doc";
     static final String PART_QUANTITY_REAL = "quantity_real";
 
+    static final String TABLE_PLACES = "places";
 
-
-
+    static final String PLACE_DOCNAME = "name_dok";
+    static final String PLACE_ARTIKUL_PART = "artikul_part";
+    static final String PLACE_NAME_PART = "name_part";
+    static final String PLACE_QUANTITY_PART = "quantity_part";
+    static final String PLACE_PRICE_PART = "price_part";
+    static final String PLACE_PLACE_NUMBER = "place_number";
 
     public DBHelper(Context context) {
         super(context, DATABASE_PARTS, null, DATABASE_VERSION);
@@ -32,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "<--- onCreate database --->");
+        Log.d(TAG, "<--- Create Parts database --->");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARTS);
         db.execSQL("create table " + TABLE_PARTS + " ("
                 + PART_ID + " integer primary key,"
@@ -42,13 +47,23 @@ public class DBHelper extends SQLiteOpenHelper {
                 + PART_PLACE + " text,"
                 + PART_QUANTITY_DOC + " integer,"
                 + PART_QUANTITY_REAL + " integer" + ");");
+
+        Log.d(TAG, "<--- Create Place database --->");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLACES);
+        db.execSQL("create table " + TABLE_PLACES + " ("
+                + PLACE_DOCNAME + " TEXT,"
+                + PLACE_ARTIKUL_PART + " TEXT,"
+                + PLACE_NAME_PART + " TEXT,"
+                + PLACE_QUANTITY_PART + " INTEGER,"
+                + PLACE_PRICE_PART + " REAL,"
+                + PLACE_PLACE_NUMBER + " TEXT" + ");");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
 
-    public void onDelete(SQLiteDatabase db){
-        Log.d(TAG, "<--- onDelete database --->");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARTS);
+    public void onDelete(SQLiteDatabase db, String tableName){
+        Log.d(TAG, "<--- Delete database --->");
+        db.execSQL("DROP TABLE IF EXISTS " + tableName);
     }
 }

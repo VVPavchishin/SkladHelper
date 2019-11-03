@@ -25,7 +25,7 @@
     <show-object-properties value="false" />
     <loaded-nodes>
       <connection connection-id="7f447220-23c5-4312-928a-6d471492ee11">
-        <schema name="main" object-types="table, column, view" />
+        <schema name="main" object-types="table, column, constraint, view, dataset trigger" />
       </connection>
     </loaded-nodes>
   </component>
@@ -37,7 +37,8 @@
       <console name="DBconnect" type="STANDARD" schema="main" session="Main">select * from parts;</console>
     </connection>
     <connection id="7f447220-23c5-4312-928a-6d471492ee11">
-      <console name="NConnect" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts]]></console>
+      <console name="NConnect" type="STANDARD" schema="main" session="Main"><![CDATA[select * from places where place_number = '8BUW9373'
+select * from places]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">

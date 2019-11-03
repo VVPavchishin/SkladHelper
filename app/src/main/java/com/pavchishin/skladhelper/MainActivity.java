@@ -80,11 +80,9 @@ public class MainActivity extends AppCompatActivity {
         if (!folder.exists()) {
             folder.mkdirs();
         }
-        String[] listInFolder = folder.list();
-        if (listInFolder.length > 0){
-            fileName = listInFolder[0];
-            Log.d(TAG, "Имя файла: " + fileName);
-
+        String[] fileInFolder = folder.list();
+        if (fileInFolder.length > 0){
+            fileName = fileInFolder[0];
             return true;
         } else {
             Toast.makeText(context, "Добавте файл в папку " + folderName, Toast.LENGTH_SHORT).show();

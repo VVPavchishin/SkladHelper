@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -209,7 +208,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             scanner.setTextSize(18);
             scanner.setText("Сканування завершено!");
             exit.setVisibility(View.VISIBLE);
-            new DBHelper(this).onDelete(db);
+            new DBHelper(this).onDelete(db, DBHelper.TABLE_PARTS);
             exit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
