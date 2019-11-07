@@ -2,10 +2,13 @@
   <dictionary name="User">
     <words>
       <w>artikul</w>
+      <w>docname</w>
       <w>pavchishin</w>
+      <w>quant</w>
       <w>razniza</w>
       <w>redex</w>
       <w>skladhelper</w>
+      <w>вiдсутня</w>
     </words>
   </dictionary>
 </component>

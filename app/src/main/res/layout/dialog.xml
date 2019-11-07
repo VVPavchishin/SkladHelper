@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="350dp"
-    android:layout_height="250dp"
+    android:layout_height="300dp"
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="vertical"
@@ -22,7 +22,7 @@
     <NumberPicker
         android:id="@+id/numberPicker"
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:solidColor="@color/colorWhite"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/title_quantity"

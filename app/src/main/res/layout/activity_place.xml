@@ -1,9 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PlaceActivity">
+    <LinearLayout
+        android:id="@+id/left_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5"
+        android:background="@color/colorDark"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/display_lt"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/title_quant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="15dp"
+                android:text="Кiлькiсть накладних"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"
+                android:layout_marginStart="15dp" />
+
+            <TextView
+                android:id="@+id/title_quant_number"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"
+                android:layout_toRightOf="@+id/title_quant"/>
+            <TextView
+                android:id="@+id/title_places"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_quant"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp"
+                android:text="Кiлькiсть мiсць"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"/>
+
+            <TextView
+                android:id="@+id/title_place_number"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_quant"
+                android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"
+                android:layout_toRightOf="@+id/title_quant"/>
+
+            <TextView
+                android:id="@+id/title_scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_places"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp"
+                android:text="Проскановано"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"/>
+
+            <TextView
+                android:id="@+id/title_scan_number"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_places"
+                android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"
+                android:layout_toRightOf="@+id/title_quant"/>
+            <TextView
+                android:id="@+id/title_difference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_scan"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp"
+                android:text="Залишок"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"/>
+
+            <TextView
+                android:id="@+id/title_difference_number"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_scan"
+                android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"
+                android:layout_toRightOf="@+id/title_quant"/>
+
+            <EditText
+                android:id="@+id/scanner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_difference"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:hint="с к а н у в а т и"
+                android:background="@null"
+                android:textColorHint="@color/colorAccent"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:textSize="16sp"
+                android:windowSoftInputMode="stateAlwaysHidden"
+                android:cursorVisible="false"/>
+        </RelativeLayout>
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8">
+
+            <LinearLayout
+                android:id="@+id/show_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical" />
+        </ScrollView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/center_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.7"
+        android:background="@color/colorDark"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/display_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:background="@color/colorDark"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+    </LinearLayout>
+
+</LinearLayout>

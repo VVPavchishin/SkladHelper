@@ -1,10 +1,12 @@
 package com.pavchishin.skladhelper;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -16,18 +18,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Objects;
 
 import static com.pavchishin.skladhelper.MainActivity.PLACE_FOLDER;
 import static com.pavchishin.skladhelper.MainActivity.TAG;
 
 public class PlaceTask extends AsyncTask<Void, Void, Void> {
 
-    Context context;
-    DBHelper helper;
-    SQLiteDatabase db;
-    ContentValues cv;
+    private static final String EMPTY = "";
+    @SuppressLint("StaticFieldLeak")
+    private Context context;
+    private SQLiteDatabase db;
 
-    public PlaceTask(Context context) {
+    PlaceTask(Context context) {
         this.context = context;
     }
 
@@ -44,28 +47,30 @@ public class PlaceTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        helper = new DBHelper(context);
+        DBHelper helper = new DBHelper(context);
         db = helper.getWritableDatabase();
 
         File workDirPath = new File(Environment.getExternalStorageDirectory() + File.separator + PLACE_FOLDER);
         if (workDirPath.exists()) {
            String[] inputFiles = workDirPath.list();
-            for (String fileName : inputFiles){
-                if (!fileName.endsWith(".xslx")){
-                    try {
-                        fillDataBase(workDirPath, fileName);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                for (String fileName : Objects.requireNonNull(inputFiles)){
+                    if (!fileName.endsWith(".xslx")){
+                        try {
+                            fillDataBase(workDirPath, fileName);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
-            Log.d(TAG, "База данных заполнена");
+            Log.d(TAG, "База данных заповнена");
         }
         return null;
     }
 
     private void fillDataBase(File workDirPath, String fileName) throws Exception {
-        cv = new ContentValues();
+        ContentValues cv = new ContentValues();
         InputStream stream = new FileInputStream(workDirPath.toString() + File.separator + fileName);
         XSSFWorkbook workbook = new XSSFWorkbook(stream);
         XSSFSheet sheet = workbook.getSheetAt(0);
@@ -77,7 +82,7 @@ public class PlaceTask extends AsyncTask<Void, Void, Void> {
 
                 Cell cellArt = row.getCell(1);
                 String cellArtikul = cellArt.getStringCellValue();
-                if (cellArtikul == "" || cellArtikul.length() == 0){
+                if (cellArtikul.equals(EMPTY) || cellArtikul.length() == 0){
                     break;
                 }
                 cv.put(DBHelper.PLACE_ARTIKUL_PART, cellArtikul);

@@ -421,13 +421,12 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
     }
 
     private void updateQuantity(String artikul , int newValue) {
-
         db.execSQL("UPDATE " + DBHelper.TABLE_PARTS + " SET " +
                 DBHelper.PART_QUANTITY_REAL + " = " + DBHelper.PART_QUANTITY_REAL + "+" + newValue + " WHERE "
                 + DBHelper.PART_ARTIKUL + "=?", new String[]{artikul});
     }
 
-    private void setNoActionBar() {
+    public void setNoActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
