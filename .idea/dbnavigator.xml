@@ -23,25 +23,17 @@
     <autoscroll-to-editor value="true" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="false" />
-    <loaded-nodes>
-      <connection connection-id="7f447220-23c5-4312-928a-6d471492ee11">
-        <schema name="main" object-types="column, view, table" />
-      </connection>
-    </loaded-nodes>
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="ebc99c67-81c3-4d5f-addf-5d7e584ed5ba">
-      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts;]]></console>
+      <console name="Connection" type="STANDARD" schema="" session="Main" />
     </connection>
     <connection id="94682639-aca2-4a0e-93be-b7e5cf3ca351">
-      <console name="DBconnect" type="STANDARD" schema="main" session="Main"><![CDATA[select * from parts;]]></console>
+      <console name="DBconnect" type="STANDARD" schema="" session="Main" />
     </connection>
     <connection id="7f447220-23c5-4312-928a-6d471492ee11">
-      <console name="NConnect" type="STANDARD" schema="main" session="Main"><![CDATA[select * from places
-SELECT DISTINCT place_number FROM places;
-select artikul_part, name_part, quantity_part from places where place_number = '8BUW9415'
-delete from places where place_number = '8BUW9373'
-select * from places]]></console>
+      <console name="NConnect" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -466,8 +458,6 @@ select * from places]]></console>
           <content-type name="HTML" enabled="true" />
           <content-type name="XHTML" enabled="true" />
           <content-type name="Java" enabled="true" />
-          <content-type name="SQL" enabled="true" />
-          <content-type name="PL/SQL" enabled="true" />
           <content-type name="Groovy" enabled="true" />
           <content-type name="AIDL" enabled="true" />
           <content-type name="YAML" enabled="true" />

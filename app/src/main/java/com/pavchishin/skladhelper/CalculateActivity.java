@@ -58,6 +58,9 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(getActionBar()).hide();
+        }
         setContentView(R.layout.activity_calculate);
         setNoActionBar();
 

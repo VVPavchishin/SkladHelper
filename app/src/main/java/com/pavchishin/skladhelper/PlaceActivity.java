@@ -84,6 +84,7 @@ public class PlaceActivity extends AppCompatActivity {
                 qDifference.setText(String.valueOf(Integer.parseInt(qPlace.getText().toString()) - scanCount));
                 scanField.setText("");
                 numList.remove(num);
+                showParts(num);
                 centerLayout.removeAllViews();
                 removeFromDB(num);
                 fillCentralDisplay();
