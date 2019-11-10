@@ -147,6 +147,7 @@
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:gravity="center"
+                android:textColor="@color/colorWhite"
                 android:imeOptions="actionDone"
                 android:importantForAutofill="no"
                 android:textSize="18sp"
@@ -156,16 +157,11 @@
 
             <ImageView
                 android:id="@+id/im_status"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="45dp"
+                android:layout_marginBottom="25dp"
                 android:layout_below="@+id/scanner"
-                android:layout_marginStart="15dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
-                android:padding="5dp"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
     </LinearLayout>

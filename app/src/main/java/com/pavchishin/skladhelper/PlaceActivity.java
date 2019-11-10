@@ -2,7 +2,6 @@ package com.pavchishin.skladhelper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -14,7 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import static com.pavchishin.skladhelper.PlaceTask.QDOCK;
 import static com.pavchishin.skladhelper.MainActivity.TAG;
@@ -31,6 +33,9 @@ public class PlaceActivity extends AppCompatActivity {
     DBHelper helper;
     SQLiteDatabase database;
 
+    ArrayList<String> numList;
+    int scanCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +47,7 @@ public class PlaceActivity extends AppCompatActivity {
         qDock = findViewById(R.id.title_quant_number);
         qPlace = findViewById(R.id.title_place_number);
         qScanned = findViewById(R.id.title_scan_number);
-        qScanned.setText(String.valueOf(0));
+        qScanned.setText(String.valueOf(scanCount));
         qDifference = findViewById(R.id.title_difference_number);
 
         scanField = findViewById(R.id.scanner);
@@ -52,9 +57,50 @@ public class PlaceActivity extends AppCompatActivity {
         centerLayout = findViewById(R.id.center_layout);
         rightLayout = findViewById(R.id.right_layout);
 
+        numList = new ArrayList<>();
+
         fillLeftDisplay();
         fillCentralDisplay();
+        qPlace.setText(String.valueOf(numList.size()));
 
+        scanField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setNoActionBar();
+                String barcode = scanField.getText().toString();
+                checkBarcode(barcode);
+            }
+        });
+
+    }
+
+    private void checkBarcode(String barcode) {
+
+        for (String num : numList) {
+            if (barcode.contains(num)){
+                status.setBackgroundResource(R.drawable.ok_im);
+                scanCount++;
+                qScanned.setText(String.valueOf(scanCount));
+                qDifference.setText(String.valueOf(Integer.parseInt(qPlace.getText().toString()) - scanCount));
+                scanField.setText("");
+                numList.remove(num);
+                centerLayout.removeAllViews();
+                removeFromDB(num);
+                fillCentralDisplay();
+                break;
+            } else {
+                status.setBackgroundResource(R.drawable.not_ok_im);
+                scanField.setText("");
+            }
+        }
+
+    }
+
+    private void removeFromDB(String num) {
+        database = helper.getWritableDatabase();
+        String whereClause = DBHelper.PLACE_PLACE_NUMBER + " =?";
+        database.delete(DBHelper.TABLE_PLACES, whereClause, new String[]{num});
+        Log.d(TAG, "Number " + num + " delete");
     }
 
     private void fillCentralDisplay() {
@@ -70,27 +116,27 @@ public class PlaceActivity extends AppCompatActivity {
         database = helper.getWritableDatabase();
         Cursor c = database.rawQuery("SELECT DISTINCT " + DBHelper.PLACE_PLACE_NUMBER
                                         + " FROM " + DBHelper.TABLE_PLACES, null);
-        int count = 0;
 
         c.moveToFirst();
             do {
-                String number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
-                Button button = new Button(this);
+                final String number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
+                final Button button = new Button(this);
                 button.setText(number);
                 centerLayout.addView(button);
-                showParts(number, button);
-                count++;
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showParts(number);
+                    }
+                });
+
+                numList.add(number);
 
             } while(c.moveToNext());
         c.close();
-        qPlace.setText(String.valueOf(count));
-        qDifference.setText(String.valueOf(count - Integer.parseInt(qScanned.getText().toString())));
     }
 
-    private void showParts(final String number, Button button) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void showParts(final String number) {
                 rightLayout.removeAllViews();
                 database = helper.getWritableDatabase();
                 Cursor c = database.rawQuery("SELECT DISTINCT " + DBHelper.PLACE_ARTIKUL_PART + "," + DBHelper.PLACE_NAME_PART + "," +
@@ -101,8 +147,6 @@ public class PlaceActivity extends AppCompatActivity {
                     String art = c.getString(c.getColumnIndex(DBHelper.PLACE_ARTIKUL_PART));
                     String name = c.getString(c.getColumnIndex(DBHelper.PLACE_NAME_PART));
                     String quant = c.getString(c.getColumnIndex(DBHelper.PLACE_QUANTITY_PART));
-
-                    Log.d(TAG, "Aртикул " + art + " Имя " + name + " Количество " + quant);
 
                     LinearLayout layout = new LinearLayout(PlaceActivity.this);
                     layout.setOrientation(LinearLayout.HORIZONTAL);
@@ -131,8 +175,6 @@ public class PlaceActivity extends AppCompatActivity {
 
                 } while(c.moveToNext());
                 c.close();
-            }
-        });
     }
 
     public void setNoActionBar() {

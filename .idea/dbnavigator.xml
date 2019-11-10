@@ -39,7 +39,9 @@
     <connection id="7f447220-23c5-4312-928a-6d471492ee11">
       <console name="NConnect" type="STANDARD" schema="main" session="Main"><![CDATA[select * from places
 SELECT DISTINCT place_number FROM places;
-select artikul_part, name_part, quantity_part from places where place_number = '8BUW9415']]></console>
+select artikul_part, name_part, quantity_part from places where place_number = '8BUW9415'
+delete from places where place_number = '8BUW9373'
+select * from places]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
