@@ -16,4 +16,9 @@
     <string name="dial_cancel">Вiдмiнити</string>
     <string name="dial_format">1AA-00-00</string>
     <string name="load_to_file">Вигрузити в файл</string>
+    <string name="q_dock">Кiлькiсть накладних</string>
+    <string name="q_places">Кiлькiсть мiсць</string>
+    <string name="on_scan">Проскановано</string>
+    <string name="q_ost">Залишок</string>
+    <string name="scaning">с к а н у в а т и</string>
 </resources>

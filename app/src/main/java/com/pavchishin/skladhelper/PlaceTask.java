@@ -23,9 +23,11 @@ import java.util.Objects;
 import static com.pavchishin.skladhelper.MainActivity.PLACE_FOLDER;
 import static com.pavchishin.skladhelper.MainActivity.TAG;
 
-public class PlaceTask extends AsyncTask<Void, Void, Void> {
+public class PlaceTask extends AsyncTask<Void, Void, Integer> {
 
+    public static final String QDOCK = "quantity";
     private static final String EMPTY = "";
+
     @SuppressLint("StaticFieldLeak")
     private Context context;
     private SQLiteDatabase db;
@@ -40,19 +42,24 @@ public class PlaceTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        context.startActivity(new Intent(context, PlaceActivity.class));
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
+        Intent intent = new Intent(context, PlaceActivity.class);
+        intent.putExtra(QDOCK, integer);
+        context.startActivity(intent);
+
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected Integer doInBackground(Void... voids) {
         DBHelper helper = new DBHelper(context);
         db = helper.getWritableDatabase();
+        int dockNumber = 0;
 
         File workDirPath = new File(Environment.getExternalStorageDirectory() + File.separator + PLACE_FOLDER);
         if (workDirPath.exists()) {
            String[] inputFiles = workDirPath.list();
+           dockNumber = inputFiles.length;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 for (String fileName : Objects.requireNonNull(inputFiles)){
                     if (!fileName.endsWith(".xslx")){
@@ -65,8 +72,10 @@ public class PlaceTask extends AsyncTask<Void, Void, Void> {
                 }
             }
             Log.d(TAG, "База данных заповнена");
+
+
         }
-        return null;
+        return dockNumber;
     }
 
     private void fillDataBase(File workDirPath, String fileName) throws Exception {
