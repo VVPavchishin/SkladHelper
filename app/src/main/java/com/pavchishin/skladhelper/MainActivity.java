@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnPlaceCalculate;
     Button btnPartsCalculate;
     Button btnInvent;
+    DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
             setNoActionBar();
         }
         setContentView(R.layout.activity_main);
+        helper = new DBHelper(context);
 
         btnPlaceCalculate = findViewById(R.id.btn_add_place);
         btnPlaceCalculate.setOnClickListener(new View.OnClickListener() {

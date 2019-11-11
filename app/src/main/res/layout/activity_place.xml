@@ -140,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/title_difference"
                 android:padding="10dp"
-                android:layout_margin="15dp"
+                android:layout_margin="10dp"
                 android:hint="@string/scaning"
                 android:background="@null"
                 android:textColorHint="@color/colorAccent"
@@ -157,13 +157,23 @@
 
             <ImageView
                 android:id="@+id/im_status"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginLeft="45dp"
-                android:layout_marginBottom="25dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="15dp"
                 android:layout_below="@+id/scanner"
-                tools:ignore="ContentDescription"
-                android:layout_marginStart="45dp" />
+                android:layout_centerHorizontal="true"
+                tools:ignore="ContentDescription" />
+
+            <ImageButton
+                android:id="@+id/button_back"
+                android:layout_width="80dp"
+                android:layout_height="800dp"
+                android:layout_below="@+id/im_status"
+                android:layout_marginLeft="40dp"
+                android:layout_marginBottom="15dp"
+                android:src="@drawable/button_left"
+                android:background="@null"
+                />
         </RelativeLayout>
     </LinearLayout>
 
