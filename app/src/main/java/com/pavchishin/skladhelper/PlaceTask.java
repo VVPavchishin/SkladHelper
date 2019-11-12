@@ -30,7 +30,6 @@ public class PlaceTask extends AsyncTask<Void, Void, Integer> {
 
     @SuppressLint("StaticFieldLeak")
     private Context context;
-    private SQLiteDatabase db;
 
     PlaceTask(Context context) {
         this.context = context;
@@ -52,11 +51,10 @@ public class PlaceTask extends AsyncTask<Void, Void, Integer> {
 
     @Override
     protected Integer doInBackground(Void... voids) {
-        DBHelper helper = new DBHelper(context);
-        db = helper.getWritableDatabase();
         int dockNumber = 0;
 
-        File workDirPath = new File(Environment.getExternalStorageDirectory() + File.separator + PLACE_FOLDER);
+        File workDirPath = new File(Environment.getExternalStorageDirectory()
+                + File.separator + PLACE_FOLDER);
         if (workDirPath.exists()) {
            String[] inputFiles = workDirPath.list();
            dockNumber = inputFiles.length;
@@ -71,16 +69,17 @@ public class PlaceTask extends AsyncTask<Void, Void, Integer> {
                     }
                 }
             }
-            Log.d(TAG, "База данных заповнена");
-
-
         }
         return dockNumber;
     }
 
     private void fillDataBase(File workDirPath, String fileName) throws Exception {
+        SQLiteDatabase db = new DBHelper(context).getWritableDatabase();
+        new DBHelper(context).onCreatePlaceDB(db);
+
         ContentValues cv = new ContentValues();
-        InputStream stream = new FileInputStream(workDirPath.toString() + File.separator + fileName);
+        InputStream stream = new FileInputStream(workDirPath.toString()
+                + File.separator + fileName);
         XSSFWorkbook workbook = new XSSFWorkbook(stream);
         XSSFSheet sheet = workbook.getSheetAt(0);
         XSSFRow row;
@@ -96,7 +95,8 @@ public class PlaceTask extends AsyncTask<Void, Void, Integer> {
                 }
                 cv.put(DBHelper.PLACE_ARTIKUL_PART, cellArtikul);
 
-                String numberDocument = String.valueOf(workbook.getSheetAt(0).getRow(15).getCell(4));
+                String numberDocument = String.valueOf(workbook.
+                        getSheetAt(0).getRow(15).getCell(4));
                 cv.put(DBHelper.PLACE_DOCNAME, numberDocument);
 
                 Cell cellNam = row.getCell(2);

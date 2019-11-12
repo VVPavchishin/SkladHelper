@@ -173,7 +173,8 @@
                 android:layout_marginTop="10dp"
                 android:src="@drawable/button_left"
                 android:background="@null"
-                />
+                android:layout_marginStart="40dp"
+                tools:ignore="ContentDescription"/>
         </RelativeLayout>
     </LinearLayout>
 
@@ -211,12 +212,13 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
             android:background="@color/colorDark"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp"
             android:paddingLeft="10dp"
+            android:paddingTop="25dp"
             android:paddingRight="10dp"
+            android:paddingBottom="25dp"
             tools:ignore="UselessParent">
 
             <LinearLayout
@@ -225,6 +227,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
         </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:background="@color/colorDark"
+            android:gravity="end">
+            <Button
+                android:id="@+id/button_good"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:text="@string/scan_complete"
+                android:layout_marginRight="25dp"
+                android:background="@color/colorDark"
+                android:layout_marginEnd="25dp" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@color/colorPrimaryDark">
+    android:background="@color/colorDark">
 
     <Button
         android:id="@+id/btn_add_parts"
@@ -16,9 +16,10 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorCyan"
         android:text="@string/place_btn"
         android:textSize="24sp"
+        android:textColor="@color/colorWhite"
         android:padding="20dp"
         android:textStyle="bold" />
 
@@ -28,10 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toEndOf="@+id/btn_add_parts"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorCyan"
         android:text="@string/btn_invent"
         android:textSize="24sp"
         android:padding="20dp"
+        android:textColor="@color/colorWhite"
         android:textStyle="bold"
         android:layout_toRightOf="@+id/btn_add_parts" />
 
@@ -41,10 +43,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toStartOf="@+id/btn_add_parts"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorCyan"
         android:text="@string/btn_place"
         android:textSize="24sp"
         android:padding="20dp"
         android:textStyle="bold"
+        android:textColor="@color/colorWhite"
         android:layout_toLeftOf="@+id/btn_add_parts" />
 </RelativeLayout>

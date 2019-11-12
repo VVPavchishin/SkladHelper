@@ -3,6 +3,7 @@ package com.pavchishin.skladhelper;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,8 +44,11 @@ public class MainActivity extends AppCompatActivity {
         btnPlaceCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkFile(PLACE_FOLDER)){
+                if (checkFile(PLACE_FOLDER) && !(new DBHelper(context)
+                        .doesTableExist(new DBHelper(context).getWritableDatabase(), DBHelper.TABLE_PLACES))){
                     new PlaceTask(context).execute();
+                } else {
+                    startActivity(new Intent(MainActivity.this, PlaceActivity.class));
                 }
             }
         });
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+
     public void setNoActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().getDecorView().setSystemUiVisibility(

@@ -21,4 +21,5 @@
     <string name="on_scan">Проскановано</string>
     <string name="q_ost">Залишок</string>
     <string name="scaning">с к а н у в а т и</string>
+    <string name="scan_complete">Завершити сканування</string>
 </resources>

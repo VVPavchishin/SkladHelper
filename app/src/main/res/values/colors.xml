@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorDark">@android:color/background_dark</color>
     <color name="colorWhite">@android:color/background_light</color>
+    <color name="colorCyan">#808080</color>
 </resources>

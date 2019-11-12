@@ -2,6 +2,7 @@ package com.pavchishin.skladhelper;
 
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -50,6 +51,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
 
     Button saveFile, exit;
 
+    Context context = this;
+
     DBHelper helper;
     SQLiteDatabase db;
 
@@ -57,11 +60,8 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(getActionBar()).hide();
-        }
         setContentView(R.layout.activity_calculate);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setNoActionBar();
 
 
@@ -133,7 +133,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             }
         });
 
-        helper = new DBHelper(this);
+        helper = new DBHelper(context);
         db = helper.getWritableDatabase();
 
         Intent intent = getIntent();
@@ -211,7 +211,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
             scanner.setTextSize(18);
             scanner.setText("Сканування завершено!");
             exit.setVisibility(View.VISIBLE);
-            new DBHelper(this).onDelete(db, DBHelper.TABLE_PARTS);
+            new DBHelper(context).onDelete(context, DBHelper.TABLE_PARTS);
             exit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
