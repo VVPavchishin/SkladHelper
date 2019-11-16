@@ -1,7 +1,9 @@
 package com.pavchishin.skladhelper;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -33,6 +35,10 @@ public class DBHelper extends SQLiteOpenHelper {
     static final String PLACE_QUANTITY_PART = "quantity_part";
     static final String PLACE_PRICE_PART = "price_part";
     static final String PLACE_PLACE_NUMBER = "place_number";
+    static final String PLACE_STATUS = "status";
+
+    static final String PLACE_STATUS_UNSCAN = "UNSCANN";
+    static final String PLACE_STATUS_SCAN = "SCANN";
 
     public DBHelper(Context context) {
         super(context, DATABASE_PARTS, null, DATABASE_VERSION);
@@ -57,13 +63,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void onCreatePlaceDB(SQLiteDatabase db) {
         Log.d(TAG, "<--- Create Place database --->");
-        db.execSQL("create table " + TABLE_PLACES + " ("
-                + PLACE_DOCNAME + " TEXT,"
-                + PLACE_ARTIKUL_PART + " TEXT,"
-                + PLACE_NAME_PART + " TEXT,"
-                + PLACE_QUANTITY_PART + " INTEGER,"
-                + PLACE_PRICE_PART + " REAL,"
-                + PLACE_PLACE_NUMBER + " TEXT" + ");");
+        db.execSQL("create TABLE " + TABLE_PLACES + " ("
+                + PLACE_DOCNAME + " TEXT, "
+                + PLACE_ARTIKUL_PART + " TEXT, "
+                + PLACE_NAME_PART + " TEXT, "
+                + PLACE_QUANTITY_PART + " INTEGER, "
+                + PLACE_PRICE_PART + " REAL, "
+                + PLACE_PLACE_NUMBER + " TEXT, "
+                + PLACE_STATUS + " TEXT" + ");");
     }
 
     public void onDelete(Context context, String tableName){
@@ -71,33 +78,38 @@ public class DBHelper extends SQLiteOpenHelper {
         new DBHelper(context).getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + tableName);
     }
 
-    public ArrayList<String> showData(Context context){
+    public ArrayList<String> showData(Context context, String table){
         Log.d(TAG, "<--- Show database --->");
         ArrayList list = new ArrayList();
         Cursor c = new DBHelper(context).getWritableDatabase()
                 .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_PLACE_NUMBER
-                + " FROM " + DBHelper.TABLE_PLACES, null);
+                + " FROM " + table + " WHERE " + DBHelper.PLACE_STATUS + " =?", new String[]{PLACE_STATUS_UNSCAN});
         c.moveToFirst();
         do {
-            String number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
-            list.add(number);
+            String number = "";
+            try {
+                number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
+            } catch (CursorIndexOutOfBoundsException e){}
+            if (number.length() != 0 || !number.equals(""))
+                list.add(number);
         } while(c.moveToNext());
         c.close();
 
         return list;
     }
 
-    public void deleteFromDB(Context context, String placeNumber){
-        Log.d(TAG, "<--- Delete from database " + placeNumber + " --->");
-        String whereClause = DBHelper.PLACE_PLACE_NUMBER + " =?";
-        new DBHelper(context).getWritableDatabase()
-                .delete(DBHelper.TABLE_PLACES, whereClause, new String[]{placeNumber});
+    public void setScannedDB(Context context, String placeNumber){
+        Log.d(TAG, "<--- Set place scanned " + placeNumber + " --->");
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.PLACE_STATUS, PLACE_STATUS_SCAN);
+        new DBHelper(context).getWritableDatabase().
+                update(DBHelper.TABLE_PLACES, cv, DBHelper.PLACE_PLACE_NUMBER +" =?", new String[]{placeNumber});
     }
 
     public boolean doesTableExist(SQLiteDatabase db, String tableName) {
         Log.d(TAG, "<<<--- Check " + tableName + " existing.... --->>>");
-        Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
-
+        Cursor cursor = db.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master " +
+                "WHERE tbl_name = '" + tableName + "'", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.close();
@@ -108,5 +120,63 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         Log.d(TAG, "<<<--- Database " + tableName + " no exist --->>>");
         return false;
+    }
+
+    public int setDockNumbers(Context context, String table){
+        Log.d(TAG, "<--- Get number document --->");
+        Cursor c = new DBHelper(context).getWritableDatabase()
+                .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_DOCNAME
+                        + " FROM " + table, null);
+        int numD = c.getCount();
+        c.close();
+        return numD;
+    }
+
+    public int setPlaceNumbers (Context context, String table){
+        Log.d(TAG, "<--- Get place number --->");
+        int numP = 0;
+        Cursor c = new DBHelper(context).getWritableDatabase()
+                .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_PLACE_NUMBER
+                        + " FROM " + table, null);
+        c.moveToFirst();
+        do {
+            String number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
+            if (!number.equals(""))
+                numP++;
+        } while(c.moveToNext());
+        c.close();
+
+        return numP;
+    }
+    public int setOnScanNumbers (Context context, String table){
+        Log.d(TAG, "<--- Get scanned number --->");
+        int count;
+        Cursor c = new DBHelper(context).getWritableDatabase()
+                .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_PLACE_NUMBER
+                        + " FROM " + table + " WHERE " + DBHelper.PLACE_STATUS + "=?", new String[]{PLACE_STATUS_SCAN});
+        count = c.getCount();
+        c.close();
+
+        return count;
+    }
+    public int setUnScanNumbers (Context context, String table){
+        Log.d(TAG, "<--- Get Unscanned number --->");
+        int count = 0;
+        Cursor c = new DBHelper(context).getWritableDatabase()
+                .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_PLACE_NUMBER
+                        + " FROM " + table + " WHERE " + DBHelper.PLACE_STATUS + "=?", new String[]{PLACE_STATUS_UNSCAN});
+        c.moveToFirst();
+        do {
+            String number = "";
+            try {
+                number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
+            } catch (CursorIndexOutOfBoundsException e){}
+            if (!number.equals("")) {
+                count++;
+            }
+        } while(c.moveToNext());
+        c.close();
+
+        return count;
     }
 }

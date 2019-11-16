@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -21,15 +20,14 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import static com.pavchishin.skladhelper.MainActivity.PLACE_FOLDER;
-import static com.pavchishin.skladhelper.MainActivity.TAG;
 
-public class PlaceTask extends AsyncTask<Void, Void, Integer> {
+public class PlaceTask extends AsyncTask<Void, Void, Void> {
 
-    public static final String QDOCK = "quantity";
     private static final String EMPTY = "";
 
     @SuppressLint("StaticFieldLeak")
     private Context context;
+    private SQLiteDatabase db;
 
     PlaceTask(Context context) {
         this.context = context;
@@ -41,23 +39,22 @@ public class PlaceTask extends AsyncTask<Void, Void, Integer> {
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
-        super.onPostExecute(integer);
+    protected void onPostExecute(Void voids) {
+        super.onPostExecute(voids);
         Intent intent = new Intent(context, PlaceActivity.class);
-        intent.putExtra(QDOCK, integer);
         context.startActivity(intent);
-
     }
 
     @Override
-    protected Integer doInBackground(Void... voids) {
-        int dockNumber = 0;
+    protected Void doInBackground(Void... voids) {
+
 
         File workDirPath = new File(Environment.getExternalStorageDirectory()
                 + File.separator + PLACE_FOLDER);
         if (workDirPath.exists()) {
            String[] inputFiles = workDirPath.list();
-           dockNumber = inputFiles.length;
+            db = new DBHelper(context).getWritableDatabase();
+            new DBHelper(context).onCreatePlaceDB(db);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 for (String fileName : Objects.requireNonNull(inputFiles)){
                     if (!fileName.endsWith(".xslx")){
@@ -70,13 +67,10 @@ public class PlaceTask extends AsyncTask<Void, Void, Integer> {
                 }
             }
         }
-        return dockNumber;
+        return null;
     }
 
     private void fillDataBase(File workDirPath, String fileName) throws Exception {
-        SQLiteDatabase db = new DBHelper(context).getWritableDatabase();
-        new DBHelper(context).onCreatePlaceDB(db);
-
         ContentValues cv = new ContentValues();
         InputStream stream = new FileInputStream(workDirPath.toString()
                 + File.separator + fileName);
@@ -114,6 +108,8 @@ public class PlaceTask extends AsyncTask<Void, Void, Integer> {
                 Cell cellPls = row.getCell(7);
                 String cellPlace = cellPls.getStringCellValue();
                 cv.put(DBHelper.PLACE_PLACE_NUMBER, cellPlace);
+
+                cv.put(DBHelper.PLACE_STATUS, "UNSCANN");
 
                 db.insert(DBHelper.TABLE_PLACES, null, cv);
             }

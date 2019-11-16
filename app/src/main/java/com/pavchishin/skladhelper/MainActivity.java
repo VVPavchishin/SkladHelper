@@ -1,16 +1,15 @@
 package com.pavchishin.skladhelper;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 
@@ -81,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             folder.mkdirs();
         }
         String[] fileInFolder = folder.list();
+        assert fileInFolder != null;
         if (fileInFolder.length > 0){
             fileName = fileInFolder[0];
             return true;

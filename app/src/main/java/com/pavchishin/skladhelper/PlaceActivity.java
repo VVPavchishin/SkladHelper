@@ -18,13 +18,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-import static com.pavchishin.skladhelper.PlaceTask.QDOCK;
-import static com.pavchishin.skladhelper.MainActivity.TAG;
 
 public class PlaceActivity extends AppCompatActivity {
 
@@ -38,12 +34,8 @@ public class PlaceActivity extends AppCompatActivity {
     ImageButton buttonBack;
     Button completeScan;
 
-    DBHelper helper;
-    SQLiteDatabase database;
-
     ArrayList<String> numbers;
     int scanCount = 0;
-    int numberPlaces = 0;
     Context context = this;
 
     @Override
@@ -52,12 +44,9 @@ public class PlaceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_place);
         setNoActionBar();
 
-        helper = new DBHelper(this);
-
         qDock = findViewById(R.id.title_quant_number);
         qPlace = findViewById(R.id.title_place_number);
         qScanned = findViewById(R.id.title_scan_number);
-        qScanned.setText(String.valueOf(scanCount));
         qDifference = findViewById(R.id.title_difference_number);
 
         scanField = findViewById(R.id.scanner);
@@ -86,7 +75,6 @@ public class PlaceActivity extends AppCompatActivity {
         });
         fillLeftDisplay();
         fillCentralDisplay();
-        qPlace.setText(String.valueOf(numberPlaces));
         scanField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,13 +92,12 @@ public class PlaceActivity extends AppCompatActivity {
             if (barcode.contains(num)){
                 status.setBackgroundResource(R.drawable.ok_im);
                 scanCount++;
-                qScanned.setText(String.valueOf(scanCount));
-                qDifference.setText(String.valueOf(Integer.parseInt(qPlace.getText().toString()) - scanCount));
                 scanField.setText("");
                 numbers.remove(num);
                 showParts(num);
                 centerLayout.removeAllViews();
-                removeFromDB(num);
+                setScanned(num);
+                fillLeftDisplay();
                 fillCentralDisplay();
                 break;
             } else {
@@ -120,18 +107,24 @@ public class PlaceActivity extends AppCompatActivity {
         }
     }
 
-    private void removeFromDB(String num) {
-      new DBHelper(context).deleteFromDB(context, num);
+    private void setScanned(String num) {
+      new DBHelper(context).setScannedDB(context, num);
     }
 
     private void fillLeftDisplay() {
-        int val = getIntent().getIntExtra(QDOCK, 0);
-        qDock.setText(String.valueOf(val));
+        int numDock = new DBHelper(context).setDockNumbers(context, DBHelper.TABLE_PLACES);
+        int placeDock = new DBHelper(context).setPlaceNumbers(context, DBHelper.TABLE_PLACES);
+        int scanDock = new DBHelper(context).setOnScanNumbers(context, DBHelper.TABLE_PLACES);
+        int scanOff = new DBHelper(context).setUnScanNumbers(context, DBHelper.TABLE_PLACES);
+        qPlace.setText(String.valueOf(placeDock));
+        qDock.setText(String.valueOf(numDock));
+        qScanned.setText(String.valueOf(scanDock));
+        qDifference.setText(String.valueOf(scanOff));
+
     }
 
     private void fillCentralDisplay() {
-        numbers = new DBHelper(context).showData(context);
-        numberPlaces = numbers.size();
+        numbers = new DBHelper(context).showData(context, DBHelper.TABLE_PLACES);
         for (final String name : numbers) {
             Button button = new Button(context);
             button.setText(name);
@@ -148,10 +141,12 @@ public class PlaceActivity extends AppCompatActivity {
 
     private void showParts(final String number) {
                 rightLayout.removeAllViews();
-                database = helper.getWritableDatabase();
-                Cursor c = database.rawQuery("SELECT DISTINCT " + DBHelper.PLACE_ARTIKUL_PART + "," + DBHelper.PLACE_NAME_PART + "," +
-                                        DBHelper.PLACE_QUANTITY_PART + " FROM " +  DBHelper.TABLE_PLACES +
-                                        " WHERE " + DBHelper.PLACE_PLACE_NUMBER + " = ?", new String[]{number});
+                DBHelper helper = new DBHelper(context);
+                SQLiteDatabase database = helper.getWritableDatabase();
+                Cursor c = database.rawQuery("SELECT DISTINCT " + DBHelper.PLACE_ARTIKUL_PART + ","
+                        + DBHelper.PLACE_NAME_PART + "," + DBHelper.PLACE_QUANTITY_PART + "" +
+                        " FROM " +  DBHelper.TABLE_PLACES + " WHERE " + DBHelper.PLACE_PLACE_NUMBER +
+                        " = ?", new String[]{number});
                 c.moveToFirst();
                 do {
                     String art = c.getString(c.getColumnIndex(DBHelper.PLACE_ARTIKUL_PART));
