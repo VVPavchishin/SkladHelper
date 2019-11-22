@@ -48,7 +48,6 @@ public class PlaceTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-
         File workDirPath = new File(Environment.getExternalStorageDirectory()
                 + File.separator + PLACE_FOLDER);
         if (workDirPath.exists()) {

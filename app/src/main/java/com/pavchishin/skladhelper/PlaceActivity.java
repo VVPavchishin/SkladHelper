@@ -2,6 +2,7 @@ package com.pavchishin.skladhelper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import static com.pavchishin.skladhelper.MainActivity.TAG;
 
 public class PlaceActivity extends AppCompatActivity {
 
@@ -35,14 +38,13 @@ public class PlaceActivity extends AppCompatActivity {
     Button completeScan;
 
     ArrayList<String> numbers;
-    int scanCount = 0;
     Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place);
-        setNoActionBar();
+        setNoActionBar(PlaceActivity.this);
 
         qDock = findViewById(R.id.title_quant_number);
         qPlace = findViewById(R.id.title_place_number);
@@ -78,7 +80,7 @@ public class PlaceActivity extends AppCompatActivity {
         scanField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setNoActionBar();
+                setNoActionBar(PlaceActivity.this);
                 String barcode = scanField.getText().toString();
                 checkBarcode(barcode);
             }
@@ -87,11 +89,9 @@ public class PlaceActivity extends AppCompatActivity {
     }
 
     private void checkBarcode(String barcode) {
-
         for (String num : numbers) {
             if (barcode.contains(num)){
                 status.setBackgroundResource(R.drawable.ok_im);
-                scanCount++;
                 scanField.setText("");
                 numbers.remove(num);
                 showParts(num);
@@ -116,6 +116,8 @@ public class PlaceActivity extends AppCompatActivity {
         int placeDock = new DBHelper(context).setPlaceNumbers(context, DBHelper.TABLE_PLACES);
         int scanDock = new DBHelper(context).setOnScanNumbers(context, DBHelper.TABLE_PLACES);
         int scanOff = new DBHelper(context).setUnScanNumbers(context, DBHelper.TABLE_PLACES);
+        Log.d(TAG, "К-во накладных " + numDock + " к-во мест " + placeDock +
+                " просканировано " + scanDock + " несканировано " + scanOff);
         qPlace.setText(String.valueOf(placeDock));
         qDock.setText(String.valueOf(numDock));
         qScanned.setText(String.valueOf(scanDock));
@@ -183,11 +185,12 @@ public class PlaceActivity extends AppCompatActivity {
     }
     private void confirmDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, AlertDialog.THEME_DEVICE_DEFAULT_DARK);
+        setNoActionBar(PlaceActivity.this);
         builder.setMessage("Завершити сканування")
                 .setNegativeButton("НI", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        setNoActionBar();
+                        setNoActionBar(PlaceActivity.this);
                         dialog.cancel();
                     }
                 })
@@ -195,12 +198,21 @@ public class PlaceActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         startActivity(new Intent(PlaceActivity.this, MainActivity.class));
+                        setNoActionBar(PlaceActivity.this);
                         finish();
                     }
                 })
                 .show();
     }
-    public void setNoActionBar() {
+    public void setNoActionBar(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = activity.getCurrentFocus();
+
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE

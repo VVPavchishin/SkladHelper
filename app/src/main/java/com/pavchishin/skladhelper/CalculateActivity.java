@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -50,6 +51,7 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
     CheckBox plusOne, changeLocation;
 
     Button saveFile, exit;
+    ImageButton back;
 
     Context context = this;
 
@@ -105,8 +107,18 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         exit = findViewById(R.id.btn_exit);
         exit.setVisibility(View.INVISIBLE);
 
+        /*Возврат*/
+        back = findViewById(R.id.b_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CalculateActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
         scanner = findViewById(R.id.edt_barcode);
-        scanner.setHintTextColor(Color.WHITE);
+        scanner.setHintTextColor(Color.GREEN);
         scanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,9 +152,11 @@ public class CalculateActivity extends AppCompatActivity implements NumberPicker
         String numberDoc = intent.getStringExtra("NUMBER");
         String dateDoc = intent.getStringExtra("DATA");
         if (numberDoc != null) {
+            txtNumber.setTextColor(Color.GREEN);
             txtNumber.setText(numberDoc.substring(5));
         }
         txtDate.setText(dateDoc);
+        txtDate.setTextColor(Color.GREEN);
     }
 
     private void setEmptyFields() {

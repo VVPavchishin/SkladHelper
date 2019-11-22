@@ -2,6 +2,7 @@ package com.pavchishin.skladhelper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,18 +29,15 @@ public class MainActivity extends AppCompatActivity {
     Button btnPlaceCalculate;
     Button btnPartsCalculate;
     Button btnInvent;
-    DBHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            setNoActionBar();
-        }
+        setNoActionBar();
         setContentView(R.layout.activity_main);
-        helper = new DBHelper(context);
 
         btnPlaceCalculate = findViewById(R.id.btn_add_place);
+        btnPlaceCalculate.setTextColor(Color.GREEN);
         btnPlaceCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnPartsCalculate = findViewById(R.id.btn_add_parts);
+        btnPartsCalculate.setTextColor(Color.GREEN);
         btnPartsCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnInvent = findViewById(R.id.btn_invent);
+        btnInvent.setTextColor(Color.GREEN);
         btnInvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean checkFile(String folderName){
-
         File folder = new File(Environment.getExternalStorageDirectory() +
                 File.separator + folderName);
         if (!folder.exists()) {
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setNoActionBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION

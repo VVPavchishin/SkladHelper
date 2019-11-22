@@ -125,9 +125,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public int setDockNumbers(Context context, String table){
         Log.d(TAG, "<--- Get number document --->");
         Cursor c = new DBHelper(context).getWritableDatabase()
-                .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_DOCNAME
+                .rawQuery("SELECT DISTINCT " + PLACE_DOCNAME
                         + " FROM " + table, null);
         int numD = c.getCount();
+        Log.d(TAG, "Число накладных " + numD);
         c.close();
         return numD;
     }
@@ -136,11 +137,15 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(TAG, "<--- Get place number --->");
         int numP = 0;
         Cursor c = new DBHelper(context).getWritableDatabase()
-                .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_PLACE_NUMBER
+                .rawQuery("SELECT DISTINCT " + PLACE_PLACE_NUMBER
                         + " FROM " + table, null);
         c.moveToFirst();
         do {
-            String number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
+            String number = "";
+            try {
+                number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
+            }  catch (CursorIndexOutOfBoundsException e){}
+
             if (!number.equals(""))
                 numP++;
         } while(c.moveToNext());
@@ -165,18 +170,15 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = new DBHelper(context).getWritableDatabase()
                 .rawQuery("SELECT DISTINCT " + DBHelper.PLACE_PLACE_NUMBER
                         + " FROM " + table + " WHERE " + DBHelper.PLACE_STATUS + "=?", new String[]{PLACE_STATUS_UNSCAN});
-        c.moveToFirst();
-        do {
-            String number = "";
-            try {
-                number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
-            } catch (CursorIndexOutOfBoundsException e){}
-            if (!number.equals("")) {
-                count++;
-            }
-        } while(c.moveToNext());
+        if (c.moveToFirst()) {
+            do {
+                String number = c.getString(c.getColumnIndex(DBHelper.PLACE_PLACE_NUMBER));
+                    if (!number.equals("")) {
+                        count++;
+                    }
+            } while (c.moveToNext());
+        }
         c.close();
-
         return count;
     }
 }

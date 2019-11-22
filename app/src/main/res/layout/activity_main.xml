@@ -19,7 +19,6 @@
         android:background="@color/colorCyan"
         android:text="@string/place_btn"
         android:textSize="24sp"
-        android:textColor="@color/colorWhite"
         android:padding="20dp"
         android:textStyle="bold" />
 
@@ -33,7 +32,6 @@
         android:text="@string/btn_invent"
         android:textSize="24sp"
         android:padding="20dp"
-        android:textColor="@color/colorWhite"
         android:textStyle="bold"
         android:layout_toRightOf="@+id/btn_add_parts" />
 
@@ -48,6 +46,5 @@
         android:textSize="24sp"
         android:padding="20dp"
         android:textStyle="bold"
-        android:textColor="@color/colorWhite"
         android:layout_toLeftOf="@+id/btn_add_parts" />
 </RelativeLayout>
